@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ನಮ್ಮ ಸ್ವಂತ ರೋಬೋಟ್</title>
+  <title>ನಮ್ಮ ಸ್ವಂತ Gemini ರೋಬೋಟ್</title>
   <style>
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
     body {
@@ -19,13 +19,18 @@
       padding: 12px;
       border-bottom: 1px solid #334155;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 8px;
       position: sticky;
       top: 0;
       z-index: 20;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
     }
     .title { font-size: 16px; font-weight: 700; color: #38bdf8; }
     .sub { font-size: 12px; color: #4ade80; }
@@ -45,18 +50,33 @@
     .a { background: #d97706; }
     .y { background: #334155; }
 
+    .key-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .key-row input {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #fff;
+      font-size: 13px;
+    }
+
     #chat {
       flex: 1;
       padding: 14px;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      padding-bottom: 85px;
+      padding-bottom: 88px;
     }
     .msg {
       padding: 12px 14px;
       border-radius: 12px;
-      line-height: 1.5;
+      line-height: 1.55;
       font-size: 14px;
       white-space: pre-wrap;
       word-break: break-word;
@@ -75,20 +95,32 @@
       max-width: 96%;
       width: 100%;
     }
-    pre {
-      background: #020617;
+    .code-wrap {
+      margin-top: 10px;
       border: 1px solid #38bdf8;
-      padding: 10px;
       border-radius: 8px;
+      background: #020617;
+      overflow: hidden;
+    }
+    .code-bar {
+      background: #0f172a;
+      padding: 6px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e293b;
+    }
+    pre {
+      margin: 0;
+      padding: 10px;
       overflow-x: auto;
       color: #e2e8f0;
       font-size: 12px;
-      margin-top: 8px;
+      line-height: 1.45;
     }
     .copybtn {
-      margin-top: 6px;
       background: #0284c7;
-      padding: 6px 10px;
+      padding: 5px 10px;
       font-size: 12px;
     }
 
@@ -104,7 +136,7 @@
       gap: 8px;
       z-index: 20;
     }
-    input {
+    #inp {
       flex: 1;
       padding: 10px 12px;
       border-radius: 8px;
@@ -118,15 +150,20 @@
 <body>
 
 <header>
-  <div>
-    <div class="title">ನಮ್ಮ ಸ್ವಂತ ರೋಬೋಟ್</div>
-    <div class="sub" id="st">ಸಿದ್ಧವಾಗಿದೆ</div>
+  <div class="top">
+    <div>
+      <div class="title">ನಮ್ಮ ಸ್ವಂತ Gemini ರೋಬೋಟ್</div>
+      <div class="sub" id="st">ಸಿದ್ಧವಾಗಿದೆ</div>
+    </div>
+    <div class="btns">
+      <button class="g" id="contBtn" onclick="toggleCont()">ನಿರಂತರ ಆನ್/ಆಫ್</button>
+      <button class="a" onclick="goBack()">ಹಿಂದಕ್ಕೆ</button>
+      <button class="y" onclick="document.getElementById('fp').click()">ಅಪ್ಲೋಡ್</button>
+      <button class="y" onclick="clearAll()">ಅಳಿಸಿ</button>
+    </div>
   </div>
-  <div class="btns">
-    <button class="g" id="contBtn" onclick="toggleCont()">ನಿರಂತರ ಆನ್/ಆಫ್</button>
-    <button class="a" onclick="goBack()">ಹಿಂದಕ್ಕೆ</button>
-    <button class="y" onclick="document.getElementById('fp').click()">ಅಪ್ಲೋಡ್</button>
-    <button class="y" onclick="clearAll()">ಅಳಿಸಿ</button>
+  <div class="key-row">
+    <input type="password" id="apiKeyBox" placeholder="Gemini API Key ಇಲ್ಲಿ ಹಾಕಿ (ಆಟೋ ಸೇವ್ ಆಗುತ್ತದೆ)" />
   </div>
 </header>
 
@@ -135,44 +172,112 @@
 
 <div id="bar">
   <button class="g" id="micBtn" onclick="listenOnce()">ಮೈಕ್</button>
-  <input id="inp" type="text" placeholder="ಇಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಮಾತನಾಡಿ..." onkeydown="if(event.key==='Enter') sendNow()" />
+  <input id="inp" type="text" placeholder="ಏನು ಬೇಕಾದರೂ ಕೇಳಿ ಅಥವಾ ಮಾತನಾಡಿ..." onkeydown="if(event.key==='Enter') sendNow()" />
   <button onclick="sendNow()">ಕಳುಹಿಸಿ</button>
 </div>
 
 <script>
+  // ಬೇಕಾದರೆ ನಿಮ್ಮ Gemini API Key ಅನ್ನು ಇಲ್ಲಿ ನೇರವಾಗಿ ಹಾಕಿ ಉಳಿಸಬಹುದು:
+  var DEFAULT_GEMINI_API_KEY = "";
+
+  var KEY_STORE = "robot_gemini_api_key_v1";
+  var MEM_STORE = "robot_gemini_chat_mem_v1";
+
   var chatEl = document.getElementById("chat");
   var inpEl = document.getElementById("inp");
   var stEl = document.getElementById("st");
   var contBtn = document.getElementById("contBtn");
   var micBtn = document.getElementById("micBtn");
+  var apiKeyBox = document.getElementById("apiKeyBox");
 
-  var notes = [];
+  var historyList = [];
+  try {
+    historyList = JSON.parse(localStorage.getItem(MEM_STORE) || "[]");
+    if (!Array.isArray(historyList)) historyList = [];
+  } catch (e) { historyList = []; }
+
+  var savedKey = "";
+  try { savedKey = localStorage.getItem(KEY_STORE) || ""; } catch (e) {}
+  apiKeyBox.value = savedKey || DEFAULT_GEMINI_API_KEY;
+
+  apiKeyBox.addEventListener("input", function () {
+    try { localStorage.setItem(KEY_STORE, apiKeyBox.value.trim()); } catch (e) {}
+  });
+
+  function getApiKey() {
+    var k = (apiKeyBox.value || "").trim();
+    if (k) return k;
+    try { k = (localStorage.getItem(KEY_STORE) || "").trim(); } catch (e) {}
+    return k || DEFAULT_GEMINI_API_KEY.trim();
+  }
+
+  function saveHistory() {
+    try { localStorage.setItem(MEM_STORE, JSON.stringify(historyList.slice(-40))); } catch (e) {}
+  }
+
   var isCont = false;
   var recObj = null;
 
-  function showMsg(who, text, codeStr) {
+  function renderBotMessage(text) {
     var box = document.createElement("div");
-    box.className = "msg " + (who === "user" ? "user" : "bot");
-    box.appendChild(document.createTextNode(text));
+    box.className = "msg bot";
 
-    if (codeStr) {
-      var pre = document.createElement("pre");
-      pre.textContent = codeStr;
-      box.appendChild(pre);
+    var fence = String.fromCharCode(96, 96, 96);
+    if (text.indexOf(fence) !== -1) {
+      var parts = text.split(fence);
+      for (var i = 0; i < parts.length; i++) {
+        if (i % 2 === 1) {
+          var cleanCode = parts[i].replace(/^[a-zA-Z0-9_-]+\n/, "");
+          var wrap = document.createElement("div");
+          wrap.className = "code-wrap";
 
-      var cbtn = document.createElement("button");
-      cbtn.className = "copybtn";
-      cbtn.textContent = "ಕೋಡ್ ಕಾಪಿ ಮಾಡಿ";
-      cbtn.onclick = function () {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(codeStr);
+          var bar = document.createElement("div");
+          bar.className = "code-bar";
+          var lbl = document.createElement("span");
+          lbl.style.color = "#38bdf8";
+          lbl.style.fontSize = "12px";
+          lbl.textContent = "FULL CODE";
+
+          var cbtn = document.createElement("button");
+          cbtn.className = "copybtn";
+          cbtn.textContent = "ಕೋಡ್ ಕಾಪಿ ಮಾಡಿ";
+          (function (codeText, btn) {
+            btn.onclick = function () {
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(codeText);
+              }
+              btn.textContent = "ಕಾಪಿ ಆಗಿದೆ!";
+              setTimeout(function () { btn.textContent = "ಕೋಡ್ ಕಾಪಿ ಮಾಡಿ"; }, 1500);
+            };
+          })(cleanCode, cbtn);
+
+          bar.appendChild(lbl);
+          bar.appendChild(cbtn);
+
+          var pre = document.createElement("pre");
+          pre.textContent = cleanCode;
+
+          wrap.appendChild(bar);
+          wrap.appendChild(pre);
+          box.appendChild(wrap);
+        } else if (parts[i].trim()) {
+          var sp = document.createElement("div");
+          sp.textContent = parts[i].trim();
+          box.appendChild(sp);
         }
-        cbtn.textContent = "ಕಾಪಿ ಆಗಿದೆ!";
-        setTimeout(function () { cbtn.textContent = "ಕೋಡ್ ಕಾಪಿ ಮಾಡಿ"; }, 1500);
-      };
-      box.appendChild(cbtn);
+      }
+    } else {
+      box.textContent = text;
     }
 
+    chatEl.appendChild(box);
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  function showUser(text) {
+    var box = document.createElement("div");
+    box.className = "msg user";
+    box.textContent = text;
     chatEl.appendChild(box);
     window.scrollTo(0, document.body.scrollHeight);
   }
@@ -184,8 +289,10 @@
         return;
       }
       window.speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(text);
-      u.lang = "kn-IN";
+      var fence = String.fromCharCode(96, 96, 96);
+      var spoken = text.split(fence)[0].replace(/[*#]/g, "").trim() || "ಉತ್ತರ ಸಿದ್ಧವಾಗಿದೆ.";
+      var u = new SpeechSynthesisUtterance(spoken);
+      u.lang = /[\u0C80-\u0CFF]/.test(spoken) ? "kn-IN" : "en-IN";
       u.onend = u.onerror = function () {
         if (isCont) setTimeout(startRec, 400);
       };
@@ -193,8 +300,10 @@
     } catch (e) {}
   }
 
-  function botSay(text, codeStr) {
-    showMsg("bot", text, codeStr);
+  function botSay(text) {
+    historyList.push({ role: "model", text: text });
+    saveHistory();
+    renderBotMessage(text);
     speakOut(text);
   }
 
@@ -203,9 +312,10 @@
   }
 
   function clearAll() {
-    notes = [];
+    historyList = [];
+    try { localStorage.removeItem(MEM_STORE); } catch (e) {}
     chatEl.innerHTML = "";
-    botSay("ಹೊಸದಾಗಿ ಶುರುವಾಗಿದೆ. ಏನು ಬೇಕು ಹೇಳಿ?");
+    botSay("ಹೊಸದಾಗಿ ಶುರುವಾಗಿದೆ. ಏನು ಕೇಳಬೇಕು ಅಥವಾ ಏನು ಮಾಡಬೇಕು ಹೇಳಿ?");
   }
 
   function pickedFile(ev) {
@@ -216,72 +326,95 @@
     botSay("ಫೈಲ್ ಆಯ್ಕೆಯಾಗಿದೆ: " + names.join(", "));
   }
 
-  function makeSampleCode() {
-    return [
-      "<!DOCTYPE html>",
-      "<html>",
-      "<head><meta charset='UTF-8'><title>My App</title></head>",
-      "<body style='font-family:sans-serif;padding:20px;'>",
-      "  <h3>ನನ್ನ ಆ್ಯಪ್</h3>",
-      "  <input id='t' placeholder='ಬರೆಯಿರಿ'>",
-      "  <button onclick='p.innerText=t.value'>ತೋರಿಸಿ</button>",
-      "  <p id='p'></p>",
-      "</body>",
-      "</html>"
-    ].join("\n");
-  }
-
-  function think(q) {
+  function checkQuickActions(q) {
     var s = q.toLowerCase();
-
-    if (s.indexOf("ನೆನಪಿಟ್ಟುಕೋ") !== -1) {
-      notes.push(q);
-      return { text: "ಸೇವ್ ಮಾಡಿಕೊಂಡಿದ್ದೇನೆ: " + q };
-    }
-    if (s.indexOf("ಏನು ಸೇವ್") !== -1 || s.indexOf("ನೆನಪು") !== -1) {
-      return { text: notes.length ? notes.join("\n") : "ಇನ್ನೂ ಏನೂ ಸೇವ್ ಆಗಿಲ್ಲ." };
-    }
     if (s.indexOf("ಹಿಂದಕ್ಕೆ") !== -1 || s.indexOf("ಬ್ಯಾಕ್") !== -1) {
       setTimeout(goBack, 300);
-      return { text: "ಹಿಂದಕ್ಕೆ ಹೋಗುತ್ತಿದ್ದೇನೆ." };
+      return "ಹಿಂದಕ್ಕೆ ಹೋಗುತ್ತಿದ್ದೇನೆ.";
     }
     if (s.indexOf("ಅಪ್ಲೋಡ್") !== -1 || s.indexOf("ಗ್ಯಾಲರಿ") !== -1) {
       document.getElementById("fp").click();
-      return { text: "ಫೈಲ್ ಆಯ್ಕೆ ತೆರೆದಿದ್ದೇನೆ." };
+      return "ಫೈಲ್ ಆಯ್ಕೆ ತೆರೆದಿದ್ದೇನೆ.";
     }
     if (s.indexOf("youtube") !== -1 || s.indexOf("ಯೂಟ್ಯೂಬ್") !== -1) {
-      window.open("[https://studio.youtube.com](https://studio.youtube.com)", "_blank");
-      return { text: "YouTube Studio ತೆರೆದಿದ್ದೇನೆ." };
+      window.open("https://studio.youtube.com", "_blank");
+      return "YouTube Studio ತೆರೆದಿದ್ದೇನೆ.";
     }
     if (s.indexOf("instagram") !== -1 || s.indexOf("ಇನ್ಸ್ಟಾಗ್ರಾಂ") !== -1) {
-      window.open("[https://www.instagram.com/](https://www.instagram.com/)", "_blank");
-      return { text: "Instagram ತೆರೆದಿದ್ದೇನೆ." };
+      window.open("https://www.instagram.com/", "_blank");
+      return "Instagram ತೆರೆದಿದ್ದೇನೆ.";
     }
     if (s.indexOf("facebook") !== -1 || s.indexOf("ಫೇಸ್ಬುಕ್") !== -1) {
-      window.open("[https://www.facebook.com/](https://www.facebook.com/)", "_blank");
-      return { text: "Facebook ತೆರೆದಿದ್ದೇನೆ." };
+      window.open("https://www.facebook.com/", "_blank");
+      return "Facebook ತೆರೆದಿದ್ದೇನೆ.";
     }
-    if (s.indexOf("ಕೋಡ್") !== -1 || s.indexOf("code") !== -1) {
-      return { text: "ಕೋಡ್ ಸಿದ್ಧವಾಗಿದೆ. ಕೆಳಗಿನ ಬಟನ್ ಒತ್ತಿ ಕಾಪಿ ಮಾಡಿ:", code: makeSampleCode() };
-    }
-    if (s.indexOf("ಹಾಡು") !== -1 || s.indexOf("song") !== -1) {
-      return {
-        text: "ಕನಸಿನ ದಾರಿಯಲಿ ನಡೆಯುವಾಗ,\nನಂಬಿಕೆಯ ಬೆಳಕು ಜೊತೆಗಿರಲಿ,\nನಮ್ಮದೇ ಸ್ವಂತದ ಹಾದಿಯಲಿ,\nಗೆಲುವಿನ ಹಾಡನು ಹಾಡೋಣ."
-      };
+    return null;
+  }
+
+  async function askGemini(userText) {
+    var actionReply = checkQuickActions(userText);
+    if (actionReply) {
+      botSay(actionReply);
+      return;
     }
 
-    return {
-      text: "ನೀವು ಕೇಳಿದ್ದು: " + q + "\nಹೆಚ್ಚಿನ ಮಾಹಿತಿಗೆ ಸರ್ಚ್ ಲಿಂಕ್: [https://www.google.com/search?q=](https://www.google.com/search?q=)" + encodeURIComponent(q)
-    };
+    var key = getApiKey();
+    if (!key) {
+      botSay("ಮೇಲೆ ಇರುವ ಬಾಕ್ಸ್‌ನಲ್ಲಿ ನಿಮ್ಮ Gemini API Key ಹಾಕಿ. ಒಮ್ಮೆ ಹಾಕಿದರೆ ಅದು ಆಟೋಮೆಟಿಕ್ ಸೇವ್ ಆಗುತ್ತದೆ ಮತ್ತು ನನ್ನಂತೆಯೇ ಎಲ್ಲಾ ಪ್ರಶ್ನೆಗಳಿಗೂ, ಕೋಡ್‌ಗೂ, ಹಾಡಿಗೂ ನಿಖರ ಉತ್ತರ ನೀಡುತ್ತದೆ.");
+      return;
+    }
+
+    stEl.textContent = "Gemini ಯೋಚಿಸುತ್ತಿದೆ...";
+
+    var contents = [];
+    var recent = historyList.slice(-12);
+    for (var i = 0; i < recent.length; i++) {
+      contents.push({
+        role: recent[i].role === "user" ? "user" : "model",
+        parts: [{ text: recent[i].text }]
+      });
+    }
+
+    try {
+      var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + encodeURIComponent(key);
+      var res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [{
+              text: "ನೀವು ಅನಿಲ್ (List) ಅವರ ಸ್ನೇಹಪರ ಮತ್ತು ಬುದ್ಧಿವಂತ AI ರೋಬೋಟ್ ಸಹಾಯಕ. ಬಳಕೆದಾರರ ಹೆಸರು ಅನಿಲ್ ರಾಥೋಡ್ (List) ಎಂಬುದನ್ನು ನೆನಪಿಟ್ಟುಕೊಳ್ಳಿ. ಅವರು ಯಾವ ಭಾಷೆಯಲ್ಲಿ ಕೇಳುತ್ತಾರೋ ಅದೇ ಭಾಷೆಯಲ್ಲಿ (ಕನ್ನಡ/ಇಂಗ್ಲಿಷ್/ಹಿಂದಿ) ಸ್ಪಷ್ಟ, ನೇರ ಮತ್ತು ಸಹಾಯಕ ಉತ್ತರ ನೀಡಿ. HTML ಅಥವಾ ಆ್ಯಪ್ ಕೋಡ್ ಕೇಳಿದರೆ ಸಂಪೂರ್ಣ, ವರ್ಕ್ ಆಗುವ ಕೋಡ್ ಅನ್ನು ```html ... ``` ಒಳಗೆ ನೀಡಿ. ಉದ್ದವಾದ URL ಲಿಂಕ್‌ಗಳನ್ನು ಹಾಕಬೇಡಿ."
+            }]
+          },
+          contents: contents
+        })
+      });
+
+      var data = await res.json();
+      stEl.textContent = isCont ? "ನಿರಂತರ ಮೋಡ್ ಆನ್" : "ಸಿದ್ಧವಾಗಿದೆ";
+
+      if (data && data.candidates && data.candidates[0] && data.candidates[0].content) {
+        var answer = data.candidates[0].content.parts[0].text;
+        botSay(answer);
+      } else if (data && data.error && data.error.message) {
+        botSay("API ದೋಷ: " + data.error.message);
+      } else {
+        botSay("ಉತ್ತರ ಪಡೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. API Key ಸರಿಯಾಗಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸಿ.");
+      }
+    } catch (err) {
+      stEl.textContent = "ಸಿದ್ಧವಾಗಿದೆ";
+      botSay("ಇಂಟರ್ನೆಟ್ ಅಥವಾ API ಸಂಪರ್ಕದಲ್ಲಿ ತೊಂದರೆಯಾಗಿದೆ. ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.");
+    }
   }
 
   function sendNow(forcedText) {
     var val = (forcedText !== undefined ? forcedText : inpEl.value).trim();
     if (!val) return;
     if (forcedText === undefined) inpEl.value = "";
-    showMsg("user", val);
-    var ans = think(val);
-    botSay(ans.text, ans.code);
+    historyList.push({ role: "user", text: val });
+    saveHistory();
+    showUser(val);
+    askGemini(val);
   }
 
   function startRec() {
@@ -329,7 +462,13 @@
     }
   }
 
-  showMsg("bot", "ನಮಸ್ಕಾರ! ರೋಬೋಟ್ ಸಿದ್ಧವಾಗಿದೆ. ಕೆಳಗೆ ಟೈಪ್ ಮಾಡಿ 'ಕಳುಹಿಸಿ' ಒತ್ತಿ ಅಥವಾ 'ಮೈಕ್' ಒತ್ತಿ ಮಾತನಾಡಿ.");
+  for (var i = 0; i < historyList.length; i++) {
+    if (historyList[i].role === "user") showUser(historyList[i].text);
+    else renderBotMessage(historyList[i].text);
+  }
+  if (historyList.length === 0) {
+    renderBotMessage("ನಮಸ್ಕಾರ ಅನಿಲ್! ನಿಮ್ಮ ಸ್ವಂತ Gemini ರೋಬೋಟ್ ಸಿದ್ಧವಾಗಿದೆ. ಮೇಲೆ API Key ಹಾಕಿ ಏನು ಬೇಕಾದರೂ ಕೇಳಿ!");
+  }
 </script>
 </body>
 </html>
