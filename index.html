@@ -3,183 +3,341 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ಜೈ ಶ್ರೀ ರಾಮ್ - AI ಸಹಾಯಕ</title>
+  <title>ಜೈ ಶ್ರೀ ರಾಮ್ — AI ಸಹಾಯಕ</title>
   <style>
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
     body {
       margin: 0;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      background: linear-gradient(160deg, #0b1120, #172554 55%, #0f172a);
       color: #f8fafc;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      height: 100vh;
     }
+
+    /* ಮೇಲಿನ ಬಾರ್ */
     header {
-      background: rgba(15, 23, 42, 0.9);
-      padding: 14px 18px;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(10px);
+      padding: 12px 14px;
       border-bottom: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .top-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
+      gap: 10px;
     }
-    .title { font-size: 18px; font-weight: 700; color: #fbbf24; }
-    .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    select, input, button {
-      padding: 8px 12px;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #fbbf24;
+      background: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      overflow: hidden;
+    }
+    .brand-logo img { width: 100%; height: 100%; object-fit: cover; }
+    .brand-title { font-size: 16px; font-weight: 700; color: #fbbf24; }
+    .brand-sub { font-size: 11px; color: #94a3b8; }
+
+    .top-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    button {
+      padding: 8px 11px;
+      border-radius: 9px;
+      border: none;
+      background: #2563eb;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { background: #1d4ed8; }
+    .btn-gold { background: #d97706; }
+    .btn-gold:hover { background: #b45309; }
+    .btn-green { background: #16a34a; }
+    .btn-green.listening { background: #dc2626; }
+    .btn-gray { background: #334155; }
+
+    .settings-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    select, input[type="password"], input[type="text"] {
+      padding: 8px 10px;
       border-radius: 8px;
       border: 1px solid #475569;
       background: #1e293b;
       color: #fff;
       font-size: 13px;
     }
-    button { cursor: pointer; background: #2563eb; border: none; font-weight: 600; }
-    button:hover { background: #1d4ed8; }
-    button.mic-btn { background: #16a34a; }
-    button.mic-btn.listening { background: #dc2626; animation: pulse 1s infinite; }
-    button.clear-btn { background: #475569; }
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+    #api-key { flex: 1; min-width: 170px; }
 
+    /* ಚಾಟ್ ಏರಿಯಾ */
     #chat-box {
       flex: 1;
-      overflow-y: auto;
-      padding: 16px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       gap: 12px;
+      padding-bottom: 90px;
     }
     .msg {
-      max-width: 85%;
+      max-width: 92%;
       padding: 12px 14px;
       border-radius: 14px;
-      line-height: 1.5;
+      line-height: 1.55;
+      font-size: 14px;
       white-space: pre-wrap;
-      word-wrap: break-word;
+      word-break: break-word;
     }
-    .user { align-self: flex-end; background: #2563eb; color: #fff; border-bottom-right-radius: 4px; }
-    .ai { align-self: flex-start; background: #334155; color: #f1f5f9; border-bottom-left-radius: 4px; }
+    .user {
+      align-self: flex-end;
+      background: #2563eb;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .ai {
+      align-self: flex-start;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #f1f5f9;
+      border-bottom-left-radius: 4px;
+      width: 100%;
+      max-width: 96%;
+    }
+
+    /* ಪೂರ್ತಿ ಕೋಡ್ ಬಾಕ್ಸ್ + ಕಾಪಿ ಬಟನ್ */
+    .code-wrapper {
+      margin-top: 10px;
+      border: 1px solid #38bdf8;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #050811;
+    }
+    .code-header {
+      background: #0f172a;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e293b;
+    }
+    .code-label { font-size: 12px; color: #38bdf8; font-weight: 700; }
+    .copy-btn {
+      background: #0284c7;
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: 6px;
+    }
+    .copy-btn.copied { background: #16a34a; }
     pre {
-      background: #090d16;
-      padding: 10px;
-      border-radius: 8px;
+      margin: 0;
+      padding: 12px;
       overflow-x: auto;
-      color: #38bdf8;
-      font-size: 13px;
+      color: #e2e8f0;
+      font-size: 12.5px;
+      line-height: 1.45;
+      max-height: none;
     }
+
+    /* ಕೆಳಗಿನ ಇನ್‌ಪುಟ್ ಬಾರ್ */
     #input-area {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.96);
+      border-top: 1px solid #334155;
+      padding: 10px;
       display: flex;
       gap: 8px;
-      padding: 12px;
-      background: #0f172a;
-      border-top: 1px solid #334155;
+      z-index: 20;
     }
-    #prompt-input {
-      flex: 1;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #475569;
-      background: #1e293b;
-      color: #fff;
-      font-size: 15px;
+    #prompt-input { flex: 1; font-size: 15px; }
+
+    /* ಸಣ್ಣ ತೇಲುವ ಚುಕ್ಕಿ (Floating Dot) */
+    #floating-dot {
+      position: fixed;
+      right: 18px;
+      bottom: 82px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fde047, #f59e0b 65%, #b45309);
+      box-shadow: 0 4px 16px rgba(251, 191, 36, 0.55);
+      border: 2px solid #fff;
+      z-index: 9999;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      user-select: none;
+      touch-action: none;
     }
-    #gallery-picker { display: none; }
-    #preview-img { max-height: 120px; border-radius: 8px; margin-top: 8px; display: none; }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="title">🙏 ಜೈ ಶ್ರೀ ರಾಮ್ — AI ಸಹಾಯಕ</div>
-  <div class="controls">
-    <select id="lang-select" title="ಭಾಷೆ ಆಯ್ಕೆ">
-      <option value="kn-IN">ಕನ್ನಡ (kn-IN)</option>
-      <option value="hi-IN">हिन्दी (hi-IN)</option>
-      <option value="en-IN">English (en-IN)</option>
+  <div class="top-row">
+    <div class="brand" onclick="document.getElementById('logo-file').click()" title="ಲೋಗೋ ಬದಲಾಯಿಸಲು ಒತ್ತಿ">
+      <div class="brand-logo" id="brand-logo">🙏</div>
+      <div>
+        <div class="brand-title">ಜೈ ಶ್ರೀ ರಾಮ್ AI</div>
+        <div class="brand-sub">ಲೋಗೋ ಬದಲಾಯಿಸಲು ಚಿತ್ರ ಒತ್ತಿ • Voice + Auto Action</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="btn-gold" onclick="goBackAction()">⬅ ಹಿಂದಕ್ಕೆ</button>
+      <button class="btn-gray" onclick="clearMemory()">ಅಳಿಸಿ</button>
+    </div>
+  </div>
+
+  <div class="settings-row">
+    <select id="lang-select">
+      <option value="kn-IN">ಕನ್ನಡ</option>
+      <option value="hi-IN">हिन्दी</option>
+      <option value="en-IN">English</option>
     </select>
-    <input type="password" id="api-key" placeholder="Gemini API Key (ಐಚ್ಛಿಕ)" />
-    <button class="clear-btn" onclick="clearMemory()">ಮೆಮೊರಿ ಅಳಿಸಿ</button>
+    <input type="password" id="api-key" placeholder="Gemini API Key (ಆಟೋ ಸೇವ್ ಆಗುತ್ತದೆ)" />
+    <button class="btn-gray" onclick="document.getElementById('gallery-file').click()">📁 ಅಪ್ಲೋಡ್</button>
   </div>
 </header>
 
 <div id="chat-box"></div>
 
-<input type="file" id="gallery-picker" accept="image/*,video/*" multiple onchange="handleGallerySelected(event)" />
+<!-- ಸಣ್ಣ ಚುಕ್ಕಿ -->
+<div id="floating-dot" title="ಮಾತನಾಡಲು ಒತ್ತಿ ಅಥವಾ ಎಳೆಯಿರಿ">●</div>
+
+<input type="file" id="logo-file" accept="image/*" style="display:none" onchange="handleLogoUpload(event)" />
+<input type="file" id="gallery-file" accept="image/*,video/*,audio/*" multiple style="display:none" onchange="handleGalleryUpload(event)" />
 
 <div id="input-area">
-  <button class="mic-btn" id="mic-btn" onclick="toggleVoiceInput()">🎤 ಮಾತನಾಡಿ</button>
-  <input type="text" id="prompt-input" placeholder="ಏನು ಬೇಕಾದರೂ ಹೇಳಿ ಅಥವಾ ಬರೆಯಿರಿ..." onkeydown="if(event.key==='Enter') sendMessage()" />
+  <button class="btn-green" id="mic-btn" onclick="toggleVoice()">🎤</button>
+  <input type="text" id="prompt-input" placeholder="ಹೇಳಿ ಅಥವಾ ಬರೆಯಿರಿ..." onkeydown="if(event.key==='Enter') sendMessage()" />
   <button onclick="sendMessage()">ಕಳುಹಿಸಿ</button>
 </div>
 
 <script>
-  const STORAGE_KEY = "jai_shree_ram_ai_memory_v1";
-  const API_KEY_STORAGE = "jai_shree_ram_gemini_key";
+  const MEM_KEY = "jsr_ai_memory_v2";
+  const API_KEY = "jsr_ai_gemini_key_v2";
+  const LOGO_KEY = "jsr_ai_custom_logo_v2";
 
   const chatBox = document.getElementById("chat-box");
   const promptInput = document.getElementById("prompt-input");
   const langSelect = document.getElementById("lang-select");
   const apiKeyInput = document.getElementById("api-key");
   const micBtn = document.getElementById("mic-btn");
+  const brandLogo = document.getElementById("brand-logo");
+  const floatingDot = document.getElementById("floating-dot");
 
-  // ಸೇವ್ ಆದ API Key ಲೋಡ್ ಮಾಡುವುದು
-  apiKeyInput.value = localStorage.getItem(API_KEY_STORAGE) || "";
-  apiKeyInput.addEventListener("change", () => {
-    localStorage.setItem(API_KEY_STORAGE, apiKeyInput.value.trim());
+  let memory = JSON.parse(localStorage.getItem(MEM_KEY) || "[]");
+
+  // ಲೋಗೋ ಲೋಡ್
+  function applyLogo(src) {
+    if (src) {
+      brandLogo.innerHTML = `<img src="${src}" alt="Logo" />`;
+      floatingDot.innerHTML = `<img src="${src}" alt="Dot" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />`;
+    }
+  }
+  applyLogo(localStorage.getItem(LOGO_KEY));
+
+  function handleLogoUpload(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      localStorage.setItem(LOGO_KEY, reader.result);
+      applyLogo(reader.result);
+      botReply("ನಿಮ್ಮ ಹೊಸ ಆ್ಯಪ್ ಲೋಗೋ ಸೆಟ್ ಆಗಿದೆ!");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Gemini API Key ಆಟೋ ಸೇವ್
+  apiKeyInput.value = localStorage.getItem(API_KEY) || "";
+  apiKeyInput.addEventListener("input", () => {
+    localStorage.setItem(API_KEY, apiKeyInput.value.trim());
   });
 
-  // ಹಿಂದಿನ ನೆನಪುಗಳನ್ನು ಲೋಡ್ ಮಾಡುವುದು
-  let memory = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-
   function saveMemory() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(memory.slice(-40)));
+    localStorage.setItem(MEM_KEY, JSON.stringify(memory.slice(-50)));
   }
 
   function clearMemory() {
     memory = [];
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(MEM_KEY);
     chatBox.innerHTML = "";
-    appendMessage("ai", "ಹಳೆಯ ನೆನಪುಗಳನ್ನು ಅಳಿಸಲಾಗಿದೆ. ಈಗ ಹೊಸದಾಗಿ ಶುರು ಮಾಡೋಣ!");
+    botReply("ಮೆಮೊರಿ ಕ್ಲಿಯರ್ ಆಗಿದೆ. ಹೊಸದಾಗಿ ಶುರು ಮಾಡೋಣ!");
   }
 
-  // ಮನುಷ್ಯನಂತೆ ಧ್ವನಿಯಲ್ಲಿ ಮಾತನಾಡುವ ಫಂಕ್ಷನ್
-  function speak(text, langCode = null) {
+  // ಮಾತನಾಡುವ ಧ್ವನಿ (TTS)
+  function speak(text, lang = null) {
     if (!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
-    const cleanText = text.replace(/```[\s\S]*?```/g, "ಕೋಡ್ ಸಿದ್ಧವಾಗಿದೆ, ಸ್ಕ್ರೀನ್ ಮೇಲೆ ನೋಡಿ.").replace(/[*#]/g, "");
-    const utter = new SpeechSynthesisUtterance(cleanText);
-    utter.lang = langCode || langSelect.value;
-    utter.rate = 0.98;
-    utter.pitch = 1.05;
+    const spoken = text.replace(/```[\s\S]*?```/g, "ಕೋಡ್ ಸಿದ್ಧವಾಗಿದೆ, ಕೆಳಗೆ ಪೂರ್ತಿ ಕೋಡ್ ಮತ್ತು ಕಾಪಿ ಬಟನ್ ಇದೆ.").replace(/[*#]/g, "");
+    const u = new SpeechSynthesisUtterance(spoken);
+    u.lang = lang || langSelect.value;
+    u.rate = 0.98;
     const voices = window.speechSynthesis.getVoices();
-    const matched = voices.find(v => v.lang.toLowerCase().startsWith(utter.lang.slice(0, 2).toLowerCase()));
-    if (matched) utter.voice = matched;
-    window.speechSynthesis.speak(utter);
+    const v = voices.find(x => x.lang.toLowerCase().startsWith(u.lang.slice(0, 2).toLowerCase()));
+    if (v) u.voice = v;
+    window.speechSynthesis.speak(u);
   }
 
-  // ಆ್ಯಪ್ ಓಪನ್ ಆದ ತಕ್ಷಣ "ಜೈ ಶ್ರೀ ರಾಮ್" ಸೌಂಡ್
-  window.addEventListener("load", () => {
-    renderSavedChat();
-    const greeting = "ಜೈ ಶ್ರೀ ರಾಮ್! ನಾನು ನಿಮ್ಮ AI ಸಹಾಯಕ. ನಾನು ನಿಮ್ಮ ಮಾತು ಕೇಳುತ್ತೇನೆ, ನೆನಪಿಟ್ಟುಕೊಳ್ಳುತ್ತೇನೆ ಮತ್ತು ಕೆಲಸ ಮಾಡಿಕೊಡುತ್ತೇನೆ. ಹೇಳಿ, ಏನು ಮಾಡಬೇಕು?";
-    appendMessage("ai", greeting);
-    setTimeout(() => speak(greeting, "kn-IN"), 300);
-  });
+  // ಕೋಡ್ ಕಾಪಿ ಮಾಡುವ ಫಂಕ್ಷನ್
+  window.copyCodeBlock = function(btn, encodedCode) {
+    const code = decodeURIComponent(encodedCode);
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = "✅ ಕಾಪಿ ಆಗಿದೆ";
+      btn.classList.add("copied");
+      setTimeout(() => {
+        btn.textContent = "📋 ಕಾಪಿ ಕೋಡ್";
+        btn.classList.remove("copied");
+      }, 1800);
+    });
+  };
 
-  function renderSavedChat() {
-    chatBox.innerHTML = "";
-    memory.forEach(item => appendMessage(item.role === "user" ? "user" : "ai", item.text));
-  }
-
-  function appendMessage(sender, text) {
+  function appendMessage(role, text) {
     const div = document.createElement("div");
-    div.className = `msg ${sender}`;
+    div.className = `msg ${role === "user" ? "user" : "ai"}`;
+
     if (text.includes("```")) {
       const parts = text.split("```");
       parts.forEach((part, idx) => {
         if (idx % 2 === 1) {
-          const pre = document.createElement("pre");
-          pre.textContent = part.replace(/^[a-zA-Z]+\n/, "");
-          div.appendChild(pre);
+          const cleanCode = part.replace(/^[a-zA-Z0-9_-]+\n/, "");
+          const wrapper = document.createElement("div");
+          wrapper.className = "code-wrapper";
+          wrapper.innerHTML = `
+            <div class="code-header">
+              <span class="code-label">FULL CODE</span>
+              <button class="copy-btn" onclick="copyCodeBlock(this, '${encodeURIComponent(cleanCode)}')">📋 ಕಾಪಿ ಕೋಡ್</button>
+            </div>
+            <pre></pre>
+          `;
+          wrapper.querySelector("pre").textContent = cleanCode;
+          div.appendChild(wrapper);
         } else if (part.trim()) {
           const span = document.createElement("span");
           span.textContent = part;
@@ -189,185 +347,200 @@
     } else {
       div.textContent = text;
     }
+
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
   }
 
-  // ಭಾಷೆ ಪತ್ತೆಹಚ್ಚುವುದು
-  function detectLanguage(text) {
+  function botReply(text, lang = null) {
+    memory.push({ role: "assistant", text });
+    saveMemory();
+    appendMessage("assistant", text);
+    speak(text, lang);
+  }
+
+  function goBackAction() {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      botReply("ಈಗಾಗಲೇ ಮೊದಲ ಪುಟದಲ್ಲಿದ್ದೀರಿ.");
+    }
+  }
+
+  function handleGalleryUpload(e) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    const names = files.map(f => f.name).join(", ");
+    botReply(`ಅಪ್ಲೋಡ್‌ಗೆ ಫೈಲ್ ಆಯ್ಕೆಯಾಗಿದೆ: ${names}. YouTube / Instagram / Facebook ತೆರೆಯಬೇಕಾ? ಹೇಳಿ.`);
+  }
+
+  function detectLang(text) {
     if (/[\u0C80-\u0CFF]/.test(text)) return "kn-IN";
     if (/[\u0900-\u097F]/.test(text)) return "hi-IN";
     return langSelect.value || "en-IN";
   }
 
-  // ಗ್ಯಾಲರಿ ತೆರೆಯುವುದು
-  function openGallery() {
-    document.getElementById("gallery-picker").click();
-  }
+  // ಆಟೋ ಆ್ಯಕ್ಷನ್‌ಗಳು
+  function runActions(text) {
+    const t = text.toLowerCase();
 
-  function handleGallerySelected(event) {
-    const files = Array.from(event.target.files || []);
-    if (!files.length) return;
-    const names = files.map(f => f.name).join(", ");
-    const reply = `ಗ್ಯಾಲರಿಯಿಂದ ${files.length} ಫೈಲ್ ಆಯ್ಕೆಯಾಗಿದೆ: ${names}. ಇದಕ್ಕೆ ಏನು ಮಾಡಬೇಕು ಎಂದು ಹೇಳಿ.`;
-    memory.push({ role: "assistant", text: reply });
-    saveMemory();
-    appendMessage("ai", reply);
-    speak(reply);
-  }
-
-  // ಆ್ಯಪ್‌ಗಳು / ವೆಬ್‌ಸೈಟ್‌ಗಳು / ಕಾಲ್ ಲಿಂಕ್‌ಗಳನ್ನು ತೆರೆಯುವುದು
-  function executeSystemActions(text) {
-    const lower = text.toLowerCase();
-
-    // ಗ್ಯಾಲರಿ
-    if (lower.includes("ಗ್ಯಾಲರಿ") || lower.includes("gallery") || lower.includes("ಫೋಟೋ") || lower.includes("photo")) {
-      openGallery();
-      return "ಖಂಡಿತ! ನಿಮ್ಮ ಗ್ಯಾಲರಿ ತೆಗೆದಿದ್ದೇನೆ, ಫೋಟೋ ಅಥವಾ ವಿಡಿಯೋ ಆಯ್ಕೆ ಮಾಡಿ.";
+    if (t.includes("ಹಿಂದಕ್ಕೆ") || t.includes("ಬ್ಯಾಕ್") || t.includes("back")) {
+      setTimeout(() => goBackAction(), 400);
+      return "ಹಿಂದಕ್ಕೆ ಬರುತ್ತಿದ್ದೇನೆ.";
     }
-
-    // YouTube ಅಪ್ಲೋಡ್ / ತೆರೆಯುವುದು
-    if (lower.includes("youtube") || lower.includes("ಯೂಟ್ಯೂಬ್")) {
+    if (t.includes("ಅಪ್ಲೋಡ್") || t.includes("ಗ್ಯಾಲರಿ") || t.includes("gallery") || t.includes("upload")) {
+      document.getElementById("gallery-file").click();
+      return "ಫೈಲ್ / ಗ್ಯಾಲರಿ ಆಯ್ಕೆ ತೆರೆದಿದ್ದೇನೆ. ಫೈಲ್ ಆಯ್ಕೆ ಮಾಡಿ.";
+    }
+    if (t.includes("youtube") || t.includes("ಯೂಟ್ಯೂಬ್")) {
       window.open("https://studio.youtube.com", "_blank");
-      return "YouTube Studio ತೆರೆದಿದ್ದೇನೆ! ಬ್ರೌಸರ್ ಸುರಕ್ಷತಾ ಕಾರಣದಿಂದ ನಿಮ್ಮ ಖಾತೆಯಿಂದ ನೇರವಾಗಿ ಅಪ್ಲೋಡ್ ಮಾಡಲು ನಿಮ್ಮ ಅನುಮತಿ ಬೇಕಾಗುತ್ತದೆ—ಅಲ್ಲಿ ಅಪ್ಲೋಡ್ ಬಟನ್ ಒತ್ತಿ ಹಾಡು/ವಿಡಿಯೋ ಹಾಕಬಹುದು.";
+      return "YouTube Studio ತೆರೆದಿದ್ದೇನೆ. ಅಲ್ಲಿ ನಿಮ್ಮ ಹಾಡು/ವಿಡಿಯೋ ಅಪ್ಲೋಡ್ ಮಾಡಬಹುದು.";
     }
-
-    // Instagram ಕರೆ / ತೆರೆಯುವುದು
-    if (lower.includes("instagram") || lower.includes("ಇನ್ಸ್ಟಾಗ್ರಾಂ")) {
+    if (t.includes("instagram") || t.includes("ಇನ್ಸ್ಟಾಗ್ರಾಂ")) {
       window.open("https://www.instagram.com/direct/inbox/", "_blank");
-      return "Instagram ತೆರೆದಿದ್ದೇನೆ! ಅಲ್ಲಿ ನಿಮ್ಮ ಸ್ನೇಹಿತರ ಹೆಸರು/ಚಾಟ್ ಆಯ್ಕೆ ಮಾಡಿ ಕರೆ ಮಾಡಬಹುದು.";
+      return "Instagram ತೆರೆದಿದ್ದೇನೆ.";
     }
-
-    // Facebook ಕರೆ / ತೆರೆಯುವುದು
-    if (lower.includes("facebook") || lower.includes("ಫೇಸ್ಬುಕ್")) {
+    if (t.includes("facebook") || t.includes("ಫೇಸ್ಬುಕ್")) {
       window.open("https://www.facebook.com/", "_blank");
-      return "Facebook ತೆರೆದಿದ್ದೇನೆ! Messenger ಮೂಲಕ ಕರೆ ಮಾಡಲು ಅಥವಾ ಪೋಸ್ಟ್ ಹಾಕಲು ಸಿದ್ಧವಾಗಿದೆ.";
+      return "Facebook ತೆರೆದಿದ್ದೇನೆ.";
     }
-
-    // WhatsApp ಕರೆ / ತೆರೆಯುವುದು
-    if (lower.includes("whatsapp") || lower.includes("ವಾಟ್ಸಾಪ್")) {
+    if (t.includes("whatsapp") || t.includes("ವಾಟ್ಸಾಪ್")) {
       window.open("https://web.whatsapp.com/", "_blank");
-      return "WhatsApp ತೆರೆದಿದ್ದೇನೆ!";
+      return "WhatsApp ತೆರೆದಿದ್ದೇನೆ.";
     }
 
-    // ಸಾಮಾನ್ಯ "ಓಪನ್ ಮಾಡು" ಕಮಾಂಡ್
-    const openMatch = text.match(/(?:open|ಓಪನ್|ತೆರೆ|ತೆರೆಯಿರಿ)\s+(.+)/i);
+    const openMatch = text.match(/(?:open|ಓಪನ್|ತೆರೆ)\s+(.+)/i);
     if (openMatch) {
-      const target = openMatch[1].trim().replace(/\s+/g, "");
-      const url = target.includes(".") ? (target.startsWith("http") ? target : "https://" + target) : "https://www.google.com/search?q=" + encodeURIComponent(openMatch[1].trim());
+      const q = openMatch[1].trim();
+      const url = q.includes(".") ? (q.startsWith("http") ? q : "https://" + q) : "https://www.google.com/search?q=" + encodeURIComponent(q);
       window.open(url, "_blank");
-      return `${openMatch[1].trim()} ಅನ್ನು ತೆರೆದಿದ್ದೇನೆ!`;
+      return `${q} ತೆರೆದಿದ್ದೇನೆ.`;
     }
-
     return null;
   }
 
-  // Gemini API ಇದ್ದರೆ ಸಂಪೂರ್ಣ AI ಉತ್ತರ ಪಡೆಯುವುದು, ಇಲ್ಲದಿದ್ದರೆ ಸ್ಥಳೀಯ ಉತ್ತರ ನೀಡುವುದು
-  async function generateAIReply(userText, detectedLang) {
-    const actionResult = executeSystemActions(userText);
-    if (actionResult) return actionResult;
+  async function askAI(userText, lang) {
+    const actionMsg = runActions(userText);
+    if (actionMsg) return actionMsg;
 
-    const apiKey = apiKeyInput.value.trim();
-    const recentHistory = memory.slice(-10).map(m => `${m.role === "user" ? "ಬಳಕೆದಾರ" : "ಸಹಾಯಕ"}: ${m.text}`).join("\n");
+    const key = apiKeyInput.value.trim();
+    const hist = memory.slice(-10).map(m => `${m.role === "user" ? "User" : "AI"}: ${m.text}`).join("\n");
 
-    if (apiKey) {
+    if (key) {
       try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(key)}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             contents: [{
               parts: [{
-                text: `ನೀವು ಸಹಾನುಭೂತಿ, ಭಾವನೆ ಮತ್ತು ಮಾನವೀಯ ಸ್ಪಂದನೆಯಿರುವ ಸ್ನೇಹಪರ AI ಸಹಾಯಕ. ಬಳಕೆದಾರ ಯಾವ ಭಾಷೆಯಲ್ಲಿ ಮಾತನಾಡುತ್ತಾರೆಯೋ ಅದೇ ಭಾಷೆಯಲ್ಲಿ (ಕನ್ನಡ/ಹಿಂದಿ/ಇಂಗ್ಲಿಷ್) ಸ್ಪಷ್ಟವಾಗಿ ಮತ್ತು ಸಂಪೂರ್ಣವಾಗಿ ಉತ್ತರಿಸಿ. ಕೋಡ್ ಕೇಳಿದರೆ ಸಂಪೂರ್ಣ ಕೋಡ್ ಬರೆಯಿರಿ; ಹಾಡು ಕೇಳಿದರೆ ಪೂರ್ಣ ಹಾಡು ಬರೆಯಿರಿ. ಹಿಂದಿನ ಸಂಭಾಷಣೆಯನ್ನು ನೆನಪಿಟ್ಟುಕೊಳ್ಳಿ:\n${recentHistory}\n\nಹೊಸ ಮಾತು: ${userText}`
+                text: `ನೀವು ಸಹಾನುಭೂತಿ ಮತ್ತು ಮನುಷ್ಯನಂತೆ ಸಹಜವಾಗಿ ಮಾತನಾಡುವ AI ಸಹಾಯಕ. ಬಳಕೆದಾರರ ಭಾಷೆಯಲ್ಲೇ (ಕನ್ನಡ/ಹಿಂದಿ/ಇಂಗ್ಲಿಷ್) ಸ್ಪಷ್ಟ ಉತ್ತರ ನೀಡಿ. ಕೋಡ್ ಕೇಳಿದರೆ ಸಂಪೂರ್ಣ ಕೋಡ್ ನೀಡಿ, ಹಾಡು ಕೇಳಿದರೆ ಪೂರ್ಣ ಹಾಡು ನೀಡಿ.\n\nಹಿಂದಿನ ಮಾತು:\n${hist}\n\nಪ್ರಶ್ನೆ/ಸೂಚನೆ: ${userText}`
               }]
             }]
           })
         });
         const data = await res.json();
-        const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (aiText) return aiText;
-      } catch (err) {
-        return "ಕ್ಷಮಿಸಿ, ನೆಟ್‌ವರ್ಕ್ ಅಥವಾ API Key ಸಮಸ್ಯೆಯಿಂದ ಕ್ಲೌಡ್ ಉತ್ತರ ತರಲು ಆಗಲಿಲ್ಲ. ಆದರೆ ನಾನು ನಿಮ್ಮ ಮಾತು ಕೇಳುತ್ತಿದ್ದೇನೆ—ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.";
+        const out = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (out) return out;
+      } catch (e) {
+        return "ನೆಟ್‌ವರ್ಕ್ ಅಥವಾ API Key ಪರಿಶೀಲಿಸಿ. API Key ಸರಿಯಾಗಿದ್ದರೆ ಪೂರ್ಣ AI ಉತ್ತರ ಬರುತ್ತದೆ.";
       }
     }
 
-    // API Key ಇಲ್ಲದಿದ್ದಾಗ ಕೋಡ್ / ಹಾಡು / ಸಾಮಾನ್ಯ ಮಾತಿಗೆ ಸ್ಥಳೀಯ ಉತ್ತರ
     if (userText.includes("ಕೋಡ್") || userText.toLowerCase().includes("code")) {
-      return `ಖಂಡಿತ! ಇಲ್ಲಿದೆ ಒಂದು ಸರಳ HTML + JavaScript ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಕೋಡ್:\n\`\`\`html\n<!DOCTYPE html>\n<html>\n<body>\n  <input id="a" type="number" placeholder="ಸಂಖ್ಯೆ 1">\n  <input id="b" type="number" placeholder="ಸಂಖ್ಯೆ 2">\n  <button onclick="res.innerText = Number(a.value) + Number(b.value)">ಕೂಡಿಸಿ</button>\n  <p id="res"></p>\n</body>\n</html>\n\`\`\`\nಇನ್ನೂ ನಿರ್ದಿಷ್ಟವಾದ ಕೋಡ್ ಬೇಕಿದ್ದರೆ ಹೇಳಿ, ಬರೆದುಕೊಡುತ್ತೇನೆ!`;
+      return `ಇಲ್ಲಿ ಪೂರ್ಣ HTML + JS ಕೋಡ್ ಇದೆ (ಮೇಲಿನ "📋 ಕಾಪಿ ಕೋಡ್" ಬಟನ್ ಒತ್ತಿ ಕಾಪಿ ಮಾಡಬಹುದು):\n\`\`\`html\n<!DOCTYPE html>\n<html lang="kn">\n<head><meta charset="UTF-8"><title>Test App</title></head>\n<body>\n  <h2>ನಮಸ್ಕಾರ!</h2>\n  <button onclick="alert('ಕೆಲಸ ಮಾಡುತ್ತಿದೆ!')">ಒತ್ತಿ</button>\n</body>\n</html>\n\`\`\``;
     }
 
     if (userText.includes("ಹಾಡು") || userText.toLowerCase().includes("song")) {
-      return `ಖಂಡಿತ! ಇಲ್ಲಿದೆ ಒಂದು ಪುಟ್ಟ ಹಾಡು:\n\nಮನಸಿನ ಆಳದ ಮಾತುಗಳ ಸಾಲಲ್ಲಿ,\nಕನಸಿನ ಹಾದಿಯು ಕರೆದಿದೆ ಜೊತೆಯಲ್ಲಿ,\nನೋವು ನಲಿವುಗಳ ಸಾಗರದಾಚೆಗೆ,\nಹೊಸ ಬೆಳಕು ಮೂಡಿದೆ ನಮ್ಮೀ ಬದುಕಲ್ಲಿ.\n\nಇದಕ್ಕೆ ಇನ್ನಷ್ಟು ಚರಣ ಸೇರಿಸಬೇಕಾ ಅಥವಾ ಬೇರೆ ಶೈಲಿಯಲ್ಲಿ ಬರೆಯಬೇಕಾ?`;
+      return `ಮನಸಿನ ಆಳದ ಭಾವನೆಗಳ ಹಾಡು:\n\nಬೆಳಕಿನ ಹಾದಿಯಲಿ ಹೆಜ್ಜೆಯ ಇಟ್ಟು,\nಕನಸಿನ ಬುತ್ತಿಯ ಕಟ್ಟಿಕೊಂಡು,\nನಗುತ ಸಾಗುವ ಬದುಕಿನ ಪಯಣ,\nಪ್ರತಿ ಕ್ಷಣವೂ ಹೊಸ ಹಾಡಿನ ಕಿರಣ.`;
     }
 
-    return `ನಾನು ನಿಮ್ಮ ಮಾತನ್ನು ಕೇಳಿಸಿಕೊಂಡೆ: "${userText}". ನಾನು ನಿಮ್ಮ ಹಿಂದಿನ ಮಾತುಗಳನ್ನು ನೆನಪಿಟ್ಟುಕೊಳ್ಳುತ್ತೇನೆ. ಇನ್ನೂ ಆಳವಾದ ಮತ್ತು ನಿಖರವಾದ ಉತ್ತರ/ಕೋಡ್/ಹಾಡು ಪಡೆಯಲು ಮೇಲೆ Gemini API Key ಹಾಕಬಹುದು, ಅಥವಾ 'ಗ್ಯಾಲರಿ ತೆಗೆಯು', 'YouTube ತೆರೆ', 'ಹಾಡು ಬರೆದು ಕೊಡು' ಎಂದು ಹೇಳಬಹುದು.`;
+    return `ನಾನು ನಿಮ್ಮ ಮಾತನ್ನು ಕೇಳಿಸಿಕೊಂಡೆ: "${userText}". ಇನ್ನೂ ಆಳವಾದ ಉತ್ತರಕ್ಕೆ ಮೇಲೆ Gemini API Key ಹಾಕಿ—ಅದು ಆಟೋಮೆಟಿಕ್ ಸೇವ್ ಆಗುತ್ತದೆ.`;
   }
 
   async function sendMessage() {
     const text = promptInput.value.trim();
     if (!text) return;
-
-    const detectedLang = detectLanguage(text);
-    langSelect.value = detectedLang;
+    const lang = detectLang(text);
+    langSelect.value = lang;
 
     memory.push({ role: "user", text });
     saveMemory();
     appendMessage("user", text);
     promptInput.value = "";
 
-    const reply = await generateAIReply(text, detectedLang);
-    memory.push({ role: "assistant", text: reply });
-    saveMemory();
-    appendMessage("ai", reply);
-    speak(reply, detectedLang);
+    const reply = await askAI(text, lang);
+    botReply(reply, lang);
   }
 
-  // ಧ್ವನಿ ಮೂಲಕ ಮಾತನಾಡಲು (Speech Recognition)
-  let recognition = null;
-  let isListening = false;
+  // ಸಣ್ಣ ಚುಕ್ಕಿಯನ್ನು ಎಳೆಯುವುದು (Drag) ಮತ್ತು ಒತ್ತಿದರೆ ಮಾತನಾಡುವುದು
+  let isDragging = false, moved = false, startX = 0, startY = 0, origLeft = 0, origTop = 0;
 
-  function toggleVoiceInput() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert("ಈ ಬ್ರೌಸರ್ ಧ್ವನಿ ಗುರುತಿಸುವಿಕೆಯನ್ನು ಬೆಂಬಲಿಸುವುದಿಲ್ಲ. Google Chrome ಬಳಸಿ.");
+  floatingDot.addEventListener("pointerdown", (e) => {
+    isDragging = true;
+    moved = false;
+    const rect = floatingDot.getBoundingClientRect();
+    startX = e.clientX;
+    startY = e.clientY;
+    origLeft = rect.left;
+    origTop = rect.top;
+    floatingDot.setPointerCapture(e.pointerId);
+  });
+
+  floatingDot.addEventListener("pointermove", (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) moved = true;
+    floatingDot.style.left = Math.max(8, Math.min(window.innerWidth - 52, origLeft + dx)) + "px";
+    floatingDot.style.top = Math.max(8, Math.min(window.innerHeight - 52, origTop + dy)) + "px";
+    floatingDot.style.right = "auto";
+    floatingDot.style.bottom = "auto";
+  });
+
+  floatingDot.addEventListener("pointerup", () => {
+    isDragging = false;
+    if (!moved) toggleVoice();
+  });
+
+  // ಧ್ವನಿ ಗುರುತಿಸುವಿಕೆ (Speech Recognition)
+  let rec = null, listening = false;
+  function toggleVoice() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      alert("Google Chrome ಬಳಸಿ.");
       return;
     }
-
-    if (isListening && recognition) {
-      recognition.stop();
+    if (listening && rec) {
+      rec.stop();
       return;
     }
-
-    recognition = new SpeechRecognition();
-    recognition.lang = langSelect.value;
-    recognition.interimResults = false;
-
-    recognition.onstart = () => {
-      isListening = true;
+    rec = new SR();
+    rec.lang = langSelect.value;
+    rec.onstart = () => {
+      listening = true;
       micBtn.classList.add("listening");
-      micBtn.textContent = "🛑 ಕೇಳುತ್ತಿದ್ದೇನೆ...";
+      micBtn.textContent = "🛑";
     };
-
-    recognition.onresult = (event) => {
-      const spokenText = event.results[0][0].transcript;
-      promptInput.value = spokenText;
+    rec.onresult = (ev) => {
+      promptInput.value = ev.results[0][0].transcript;
       sendMessage();
     };
-
-    recognition.onerror = () => {
-      isListening = false;
+    rec.onend = rec.onerror = () => {
+      listening = false;
       micBtn.classList.remove("listening");
-      micBtn.textContent = "🎤 ಮಾತನಾಡಿ";
+      micBtn.textContent = "🎤";
     };
-
-    recognition.onend = () => {
-      isListening = false;
-      micBtn.classList.remove("listening");
-      micBtn.textContent = "🎤 ಮಾತನಾಡಿ";
-    };
-
-    recognition.start();
+    rec.start();
   }
+
+  // ಓಪನ್ ಆದ ತಕ್ಷಣ "ಜೈ ಶ್ರೀ ರಾಮ್"
+  window.addEventListener("load", () => {
+    memory.forEach(m => appendMessage(m.role, m.text));
+    const hello = "ಜೈ ಶ್ರೀ ರಾಮ್! ನಾನು ನಿಮ್ಮ AI ಸಹಾಯಕ. ಹೇಳಿ, ಏನು ಕೆಲಸ ಮಾಡಬೇಕು?";
+    appendMessage("assistant", hello);
+    setTimeout(() => speak(hello, "kn-IN"), 300);
+  });
 </script>
 </body>
 </html>
