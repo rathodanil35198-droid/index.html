@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ನಮ್ಮ ಸ್ವಂತ ರೋಬೋಟ್ — ಆವೃತ್ತಿ A</title>
+  <title>ನಮ್ಮ ಸ್ವಂತ ರೋಬೋಟ್</title>
   <style>
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
     body {
       margin: 0;
-      background: linear-gradient(160deg, #060b19, #0f172a 60%, #1e293b);
+      background: #0b1120;
       color: #f8fafc;
       min-height: 100vh;
       display: flex;
@@ -16,74 +16,102 @@
     }
     header {
       background: #0f172a;
-      padding: 12px 14px;
+      padding: 12px;
       border-bottom: 1px solid #334155;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
       flex-wrap: wrap;
+      gap: 8px;
       position: sticky;
       top: 0;
       z-index: 20;
     }
     .title { font-size: 16px; font-weight: 700; color: #38bdf8; }
-    .status { font-size: 12px; color: #4ade80; }
+    .sub { font-size: 12px; color: #4ade80; }
     .btns { display: flex; gap: 6px; flex-wrap: wrap; }
     button {
-      padding: 8px 11px; border-radius: 8px; border: none;
-      background: #2563eb; color: #fff; font-weight: 600;
-      font-size: 13px; cursor: pointer;
+      padding: 8px 11px;
+      border-radius: 8px;
+      border: none;
+      background: #2563eb;
+      color: #fff;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
     }
-    .btn-green { background: #16a34a; }
-    .btn-red { background: #dc2626; }
-    .btn-amber { background: #d97706; }
-    .btn-gray { background: #334155; }
+    .g { background: #16a34a; }
+    .r { background: #dc2626; }
+    .a { background: #d97706; }
+    .y { background: #334155; }
 
     #chat {
-      flex: 1; padding: 14px; display: flex;
-      flex-direction: column; gap: 12px; padding-bottom: 92px;
+      flex: 1;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-bottom: 85px;
     }
     .msg {
-      padding: 12px 14px; border-radius: 14px;
-      line-height: 1.55; font-size: 14px; white-space: pre-wrap;
+      padding: 12px 14px;
+      border-radius: 12px;
+      line-height: 1.5;
+      font-size: 14px;
+      white-space: pre-wrap;
       word-break: break-word;
     }
     .user {
-      align-self: flex-end; background: #2563eb;
-      color: #fff; max-width: 88%; border-bottom-right-radius: 4px;
+      align-self: flex-end;
+      background: #2563eb;
+      color: #fff;
+      max-width: 88%;
     }
     .bot {
-      align-self: flex-start; background: #1e293b;
-      border: 1px solid #334155; width: 100%; max-width: 96%;
-      border-bottom-left-radius: 4px;
+      align-self: flex-start;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #f1f5f9;
+      max-width: 96%;
+      width: 100%;
     }
-
-    .code-box {
-      margin-top: 10px; border: 1px solid #38bdf8;
-      border-radius: 10px; overflow: hidden; background: #050811;
-    }
-    .code-top {
-      background: #0f172a; padding: 8px 12px;
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid #1e293b;
-    }
-    .copy-btn { background: #0284c7; padding: 5px 10px; font-size: 12px; border-radius: 6px; }
-    .copy-btn.ok { background: #16a34a; }
     pre {
-      margin: 0; padding: 12px; overflow-x: auto;
-      color: #e2e8f0; font-size: 12.5px; line-height: 1.45;
+      background: #020617;
+      border: 1px solid #38bdf8;
+      padding: 10px;
+      border-radius: 8px;
+      overflow-x: auto;
+      color: #e2e8f0;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    .copybtn {
+      margin-top: 6px;
+      background: #0284c7;
+      padding: 6px 10px;
+      font-size: 12px;
     }
 
     #bar {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: #0f172a; border-top: 1px solid #334155;
-      padding: 10px; display: flex; gap: 8px; z-index: 20;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #0f172a;
+      border-top: 1px solid #334155;
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      z-index: 20;
     }
     input {
-      flex: 1; padding: 10px 12px; border-radius: 8px;
-      border: 1px solid #475569; background: #1e293b;
-      color: #fff; font-size: 15px;
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #fff;
+      font-size: 15px;
     }
   </style>
 </head>
@@ -91,315 +119,217 @@
 
 <header>
   <div>
-    <div class="title">🤖 ನಮ್ಮ ಸ್ವಂತ ರೋಬೋಟ್</div>
-    <div class="status" id="statusText">ಸಿದ್ಧವಾಗಿದೆ • ಉತ್ತರ + ಕೋಡ್ + ಹಾಡು + ನೆನಪು</div>
+    <div class="title">ನಮ್ಮ ಸ್ವಂತ ರೋಬೋಟ್</div>
+    <div class="sub" id="st">ಸಿದ್ಧವಾಗಿದೆ</div>
   </div>
   <div class="btns">
-    <button class="btn-green" id="autoBtn" onclick="toggleContinuous()">🔁 ನಿರಂತರ ಆನ್/ಆಫ್</button>
-    <button class="btn-amber" onclick="goBackSafe()">⬅ ಹಿಂದಕ್ಕೆ</button>
-    <button class="btn-gray" onclick="document.getElementById('filePick').click()">📁 ಅಪ್ಲೋಡ್</button>
-    <button class="btn-gray" onclick="clearChat()">ಅಳಿಸಿ</button>
+    <button class="g" id="contBtn" onclick="toggleCont()">ನಿರಂತರ ಆನ್/ಆಫ್</button>
+    <button class="a" onclick="goBack()">ಹಿಂದಕ್ಕೆ</button>
+    <button class="y" onclick="document.getElementById('fp').click()">ಅಪ್ಲೋಡ್</button>
+    <button class="y" onclick="clearAll()">ಅಳಿಸಿ</button>
   </div>
 </header>
 
 <div id="chat"></div>
-<input type="file" id="filePick" accept="image/*,video/*,audio/*,.html,.txt" multiple style="display:none" onchange="onFilePick(event)" />
+<input type="file" id="fp" multiple style="display:none" onchange="pickedFile(event)" />
 
 <div id="bar">
-  <button class="btn-green" id="micBtn" onclick="startOnce()">🎤</button>
-  <input id="inp" type="text" placeholder="ಪ್ರಶ್ನೆ, ಕೋಡ್, ಹಾಡು, ನೆನಪಿಟ್ಟುಕೋ..." onkeydown="if(event.key==='Enter') sendText()" />
-  <button id="sendBtn" onclick="sendText()">ಕಳುಹಿಸಿ</button>
+  <button class="g" id="micBtn" onclick="listenOnce()">ಮೈಕ್</button>
+  <input id="inp" type="text" placeholder="ಇಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಮಾತನಾಡಿ..." onkeydown="if(event.key==='Enter') sendNow()" />
+  <button onclick="sendNow()">ಕಳುಹಿಸಿ</button>
 </div>
 
 <script>
-  const MEM_KEY = "my_robot_a_mem_v1";
-  const chat = document.getElementById("chat");
-  const inp = document.getElementById("inp");
-  const statusText = document.getElementById("statusText");
-  const autoBtn = document.getElementById("autoBtn");
-  const micBtn = document.getElementById("micBtn");
+  var chatEl = document.getElementById("chat");
+  var inpEl = document.getElementById("inp");
+  var stEl = document.getElementById("st");
+  var contBtn = document.getElementById("contBtn");
+  var micBtn = document.getElementById("micBtn");
 
-  let memory = [];
-  try {
-    memory = JSON.parse(localStorage.getItem(MEM_KEY) || "[]");
-    if (!Array.isArray(memory)) memory = [];
-  } catch (_) {
-    memory = [];
-  }
+  var notes = [];
+  var isCont = false;
+  var recObj = null;
 
-  let continuousMode = false;
-  let isSpeaking = false;
-  let rec = null;
+  function showMsg(who, text, codeStr) {
+    var box = document.createElement("div");
+    box.className = "msg " + (who === "user" ? "user" : "bot");
+    box.appendChild(document.createTextNode(text));
 
-  function saveMemory() {
-    try {
-      localStorage.setItem(MEM_KEY, JSON.stringify(memory.slice(-100)));
-    } catch (_) {}
-  }
+    if (codeStr) {
+      var pre = document.createElement("pre");
+      pre.textContent = codeStr;
+      box.appendChild(pre);
 
-  function goBackSafe() {
-    try {
-      if (window.history.length > 1) window.history.back();
-    } catch (_) {}
-  }
-
-  function clearChat() {
-    memory = [];
-    try { localStorage.removeItem(MEM_KEY); } catch (_) {}
-    chat.innerHTML = "";
-    reply("ಹೊಸದಾಗಿ ಶುರುವಾಗಿದೆ! ಏನು ಕೇಳಬೇಕು ಅಥವಾ ಏನು ತಯಾರಿಸಬೇಕು ಹೇಳಿ.");
-  }
-
-  function onFilePick(e) {
-    const files = Array.from((e && e.target && e.target.files) || []);
-    if (!files.length) return;
-    const names = files.map(f => f.name).join(", ");
-    memory.push({ role: "note", text: "ಫೈಲ್: " + names });
-    saveMemory();
-    reply(`ಫೈಲ್ ಆಯ್ಕೆಯಾಗಿದೆ: ${names}. ಇದನ್ನು ನೆನಪಿನಲ್ಲಿ ಇಟ್ಟುಕೊಂಡಿದ್ದೇನೆ.`);
-  }
-
-  window.copyCode = function(btn, encoded) {
-    try {
-      const text = decodeURIComponent(encoded);
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text);
-      } else {
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
-      }
-      btn.textContent = "✅ ಕಾಪಿ ಆಗಿದೆ";
-      btn.classList.add("ok");
-      setTimeout(() => {
-        btn.textContent = "📋 ಕಾಪಿ ಕೋಡ್";
-        btn.classList.remove("ok");
-      }, 1800);
-    } catch (_) {}
-  };
-
-  function addMsg(role, text) {
-    const d = document.createElement("div");
-    d.className = `msg ${role === "user" ? "user" : "bot"}`;
-
-    if (text.includes("```")) {
-      const parts = text.split("```");
-      parts.forEach((p, i) => {
-        if (i % 2 === 1) {
-          const code = p.replace(/^[a-zA-Z0-9_-]+\n/, "");
-          const box = document.createElement("div");
-          box.className = "code-box";
-          box.innerHTML = `
-            <div class="code-top">
-              <span style="color:#38bdf8;font-size:12px;font-weight:700;">FULL CODE</span>
-              <button class="copy-btn" onclick="copyCode(this, '${encodeURIComponent(code)}')">📋 ಕಾಪಿ ಕೋಡ್</button>
-            </div>
-            <pre></pre>
-          `;
-          box.querySelector("pre").textContent = code;
-          div.appendChild(box);
-        } else if (p.trim()) {
-          const span = document.createElement("span");
-          span.textContent = p;
-          div.appendChild(span);
+      var cbtn = document.createElement("button");
+      cbtn.className = "copybtn";
+      cbtn.textContent = "ಕೋಡ್ ಕಾಪಿ ಮಾಡಿ";
+      cbtn.onclick = function () {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(codeStr);
         }
-      });
-    } else {
-      div.textContent = text;
+        cbtn.textContent = "ಕಾಪಿ ಆಗಿದೆ!";
+        setTimeout(function () { cbtn.textContent = "ಕೋಡ್ ಕಾಪಿ ಮಾಡಿ"; }, 1500);
+      };
+      box.appendChild(cbtn);
     }
 
-    chat.appendChild(d);
+    chatEl.appendChild(box);
     window.scrollTo(0, document.body.scrollHeight);
   }
 
-  function speakSafe(text) {
+  function speakOut(text) {
     try {
-      if (!("speechSynthesis" in window)) return;
-      window.speechSynthesis.cancel();
-      isSpeaking = true;
-      statusText.textContent = "🔊 ಮಾತನಾಡುತ್ತಿದ್ದೇನೆ...";
-      const cleanSpoken = text.replace(/```[\s\S]*?```/g, "ಕೋಡ್ ಸಿದ್ಧವಾಗಿದೆ, ಕೆಳಗೆ ಕಾಪಿ ಬಟನ್ ಇದೆ.").replace(/[*#]/g, "");
-      const u = new SpeechSynthesisUtterance(cleanSpoken);
-      u.lang = /[\u0C80-\u0CFF]/.test(cleanSpoken) ? "kn-IN" : "en-IN";
-      u.onend = u.onerror = () => {
-        isSpeaking = false;
-        statusText.textContent = continuousMode ? "👂 ನಿರಂತರ ಕೇಳುತ್ತಿದ್ದೇನೆ..." : "ಸಿದ್ಧವಾಗಿದೆ • ಉತ್ತರ + ಕೋಡ್ + ಹಾಡು + ನೆನಪು";
-        if (continuousMode) setTimeout(() => startListen(), 400);
-      };
-      window.speechSynthesis.speak(u);
-    } catch (_) {
-      isSpeaking = false;
-    }
-  }
-
-  function reply(text) {
-    memory.push({ role: "bot", text });
-    saveMemory();
-    addMsg("bot", text);
-    speakSafe(text);
-  }
-
-  function makeCodeForRequest(reqText) {
-    const t = reqText.toLowerCase();
-    const wantsCalc = t.includes("ಕ್ಯಾಲ್ಕುಲೇಟರ್") || t.includes("ಲೆಕ್ಕ") || t.includes("calc");
-    const bodyContent = wantsCalc
-      ? `<input id="a" type="number" placeholder="ಮೊದಲ ಸಂಖ್ಯೆ"><input id="b" type="number" placeholder="ಎರಡನೇ ಸಂಖ್ಯೆ"><button onclick="out.innerText = 'ಒಟ್ಟು: ' + (Number(a.value)+Number(b.value))">ಕೂಡಿಸಿ</button><p id="out"></p>`
-      : `<input id="txt" placeholder="ಇಲ್ಲಿ ಬರೆಯಿರಿ..."><button onclick="list.innerHTML += '<li>' + txt.value + '</li>'; txt.value=''">ಸೇರಿಸಿ</button><ul id="list"></ul>`;
-
-    return `ನಿಮ್ಮ ಕೇಳಿಕೆಗೆ ತಕ್ಕಂತೆ ಸಂಪೂರ್ಣ ಕೋಡ್ ಸಿದ್ಧವಾಗಿದೆ (ಮೇಲೆ "📋 ಕಾಪಿ ಕೋಡ್" ಒತ್ತಿ ಕಾಪಿ ಮಾಡಿ):\n\`\`\`html\n<!DOCTYPE html>\n<html lang="kn">\n<head>\n  <meta charset="UTF-8" />\n  <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n  <title>ಸ್ವಂತ ಟೂಲ್</title>\n  <style>\n    body { font-family: sans-serif; padding: 20px; background: #0f172a; color: #fff; }\n    input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; font-size: 16px; }\n    button { background: #2563eb; color: #fff; border: none; font-weight: bold; }\n  </style>\n</head>\n<body>\n  <h2>ಸ್ವಂತ ಅಪ್ಲಿಕೇಶನ್</h2>\n  ${bodyContent}\n  <button onclick="history.back()">⬅ ಹಿಂದಕ್ಕೆ</button>\n</body>\n</html>\n\`\`\``;
-  }
-
-  function makeSongForRequest(reqText) {
-    const t = reqText.toLowerCase();
-    if (t.includes("ನೋವು") || t.includes("ಸೋಲು") || t.includes("sad")) {
-      return `ನೋವಿನ ಭಾವದ ಹಾಡು:\n\nಕನಸಿನ ದಾರಿಯಲಿ ಮೌನದ ಹೆಜ್ಜೆ,\nನನ್ನೆದೆಯ ಮಾತನು ಕೇಳುವರಾರಿಲ್ಲ,\nನೋವಿನ ಕಡಲಲ್ಲೂ ಧೈರ್ಯದ ದೀಪ,\nಹೊಸ ಬೆಳಕಿನ ಹಾದಿಗೆ ಸಾಗುವ ರೂಪ.`;
-    }
-    return `ಉತ್ಸಾಹದ ಹಾಡು:\n\nಮುಂಜಾನೆಯ ಕಿರಣದ ಜೊತೆಯಲಿ ಬಂದು,\nಕನಸಿನ ಬುತ್ತಿಯ ಕಟ್ಟಿಕೊಂಡು,\nನಮ್ಮದೇ ಹಾದಿಯಲಿ ಸಾಗುವ ಬಾರ,\nಗೆಲುವಿನ ಹಾಡನು ಹಾಡೋಣ ಜೋರ.`;
-  }
-
-  function processCommand(userText) {
-    const low = userText.toLowerCase();
-
-    if (low.includes("ನೆನಪಿಟ್ಟುಕೋ") || low.includes("remember")) {
-      memory.push({ role: "note", text: userText });
-      saveMemory();
-      return `ಖಂಡಿತ! ಇದನ್ನು ನನ್ನ ನೆನಪಿನಲ್ಲಿ ಸೇವ್ ಮಾಡಿದ್ದೇನೆ: "${userText}"`;
-    }
-
-    if (low.includes("ಏನು ಸೇವ್") || low.includes("ನೆನಪು") || low.includes("ನೋಟ್ಸ್")) {
-      const notes = memory.filter(m => m.role === "note").map(m => "• " + m.text);
-      return notes.length ? "ನಿಮ್ಮ ನೆನಪಿನಲ್ಲಿರುವ ವಿವರಗಳು:\n" + notes.join("\n") : "ಇನ್ನೂ ಯಾವುದೇ ವಿಶೇಷ ಟಿಪ್ಪಣಿ ಸೇವ್ ಆಗಿಲ್ಲ. 'ನೆನಪಿಟ್ಟುಕೋ ...' ಎಂದು ಹೇಳಿ ಸೇವ್ ಮಾಡಬಹುದು.";
-    }
-
-    if (low.includes("ಹಿಂದಕ್ಕೆ") || low.includes("ಬ್ಯಾಕ್") || low.includes("back")) {
-      setTimeout(() => goBackSafe(), 300);
-      return "ಹಿಂದಕ್ಕೆ ಬರುತ್ತಿದ್ದೇನೆ.";
-    }
-
-    if (low.includes("ನಿಲ್ಲಿಸು") || low.includes("stop")) {
-      continuousMode = false;
-      autoBtn.classList.remove("btn-red");
-      autoBtn.classList.add("btn-green");
-      try { if (rec) rec.stop(); } catch (_) {}
-      return "ನಿರಂತರ ಕೇಳುವಿಕೆಯನ್ನು ನಿಲ್ಲಿಸಿದ್ದೇನೆ.";
-    }
-
-    if (low.includes("ಗ್ಯಾಲರಿ") || low.includes("ಅಪ್ಲೋಡ್") || low.includes("upload")) {
-      try { document.getElementById("filePick").click(); } catch (_) {}
-      return "ಗ್ಯಾಲರಿ / ಫೈಲ್ ಆಯ್ಕೆ ತೆರೆದಿದ್ದೇನೆ.";
-    }
-
-    if (low.includes("instagram") || low.includes("ಇನ್ಸ್ಟಾಗ್ರಾಂ")) {
-      try { window.open("https://www.instagram.com/", "_blank"); } catch (_) {}
-      return "Instagram ತೆರೆದಿದ್ದೇನೆ.";
-    }
-    if (low.includes("youtube") || low.includes("ಯೂಟ್ಯೂಬ್")) {
-      try { window.open("https://studio.youtube.com", "_blank"); } catch (_) {}
-      return "YouTube Studio ತೆರೆದಿದ್ದೇನೆ.";
-    }
-    if (low.includes("facebook") || low.includes("ಫೇಸ್ಬುಕ್")) {
-      try { window.open("https://www.facebook.com/", "_blank"); } catch (_) {}
-      return "Facebook ತೆರೆದಿದ್ದೇನೆ.";
-    }
-    if (low.includes("whatsapp") || low.includes("ವಾಟ್ಸಾಪ್")) {
-      try { window.open("https://web.whatsapp.com/", "_blank"); } catch (_) {}
-      return "WhatsApp ತೆರೆದಿದ್ದೇನೆ.";
-    }
-
-    if (low.includes("ಕೋಡ್") || low.includes("code") || low.includes("ತಯಾರಿಸ")) {
-      return makeCodeForRequest(userText);
-    }
-
-    if (low.includes("ಹಾಡು") || low.includes("song")) {
-      return makeSongForRequest(userText);
-    }
-
-    if (low.includes("ಹೆಸರು") || low.includes("ನೀನು ಯಾರು")) {
-      return "ನನ್ನ ಹೆಸರು 'ನಮ್ಮ ಸ್ವಂತ ರೋಬೋಟ್'. ನಾನು ನಿಮ್ಮ ಮಾತು ಕೇಳುತ್ತೇನೆ, ಉತ್ತರ ನೀಡುತ್ತೇನೆ, ಕೋಡ್ ಮತ್ತು ಹಾಡು ಬರೆದುಕೊಡುತ್ತೇನೆ, ನೆನಪಿಟ್ಟುಕೊಳ್ಳುತ್ತೇನೆ ಮತ್ತು ಆ್ಯಕ್ಷನ್ ಮಾಡುತ್ತೇನೆ.";
-    }
-
-    const qUrl = "https://www.google.com/search?q=" + encodeURIComponent(userText);
-    return `"${userText}" ಕುರಿತು ಉತ್ತರ:\nಈ ವಿಷಯದ ಪೂರ್ಣ ಮಾಹಿತಿಗಾಗಿ ಸರ್ಚ್ ಲಿಂಕ್ ಇಲ್ಲಿದೆ: ${qUrl}\n\nಇದಕ್ಕೆ ಕೋಡ್ ಬೇಕಿದ್ದರೆ 'ಕೋಡ್ ಬರಿ' ಎನ್ನಿ, ಹಾಡು ಬೇಕಿದ್ದರೆ 'ಹಾಡು ಬರಿ' ಎನ್ನಿ.`;
-  }
-
-  function sendText(spokenOrTyped = null) {
-    const text = String(spokenOrTyped ?? inp.value ?? "").trim();
-    if (!text) return;
-    if (!spokenOrTyped) inp.value = "";
-
-    memory.push({ role: "user", text });
-    saveMemory();
-    addMsg("user", text);
-
-    const ans = processCommand(text);
-    reply(ans);
-  }
-
-  function startListen() {
-    try {
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SR) {
-        alert("Google Chrome ಬಳಸಿ.");
+      if (!("speechSynthesis" in window)) {
+        if (isCont) setTimeout(startRec, 400);
         return;
       }
-      if (isSpeaking) return;
-      if (rec) { try { rec.abort(); } catch (_) {} }
-      rec = new SR();
-      rec.lang = "kn-IN";
-      rec.interimResults = false;
-      rec.continuous = false;
-
-      rec.onstart = () => {
-        statusText.textContent = "👂 ಕೇಳುತ್ತಿದ್ದೇನೆ... ಮಾತನಾಡಿ";
-        micBtn.classList.add("btn-red");
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = "kn-IN";
+      u.onend = u.onerror = function () {
+        if (isCont) setTimeout(startRec, 400);
       };
-      rec.onresult = (e) => {
-        const heard = e.results[0][0].transcript;
-        sendText(heard);
-      };
-      rec.onerror = () => {
-        micBtn.classList.remove("btn-red");
-        if (continuousMode && !isSpeaking) setTimeout(() => startListen(), 600);
-      };
-      rec.onend = () => {
-        micBtn.classList.remove("btn-red");
-        if (continuousMode && !isSpeaking) setTimeout(() => startListen(), 450);
-      };
-      rec.start();
-    } catch (_) {}
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
   }
 
-  function startOnce() {
-    continuousMode = false;
-    autoBtn.classList.remove("btn-red");
-    autoBtn.classList.add("btn-green");
-    startListen();
+  function botSay(text, codeStr) {
+    showMsg("bot", text, codeStr);
+    speakOut(text);
   }
 
-  function toggleContinuous() {
-    continuousMode = !continuousMode;
-    if (continuousMode) {
-      autoBtn.classList.remove("btn-green");
-      autoBtn.classList.add("btn-red");
-      statusText.textContent = "🔁 ನಿರಂತರ ಮೋಡ್ ಆನ್ ಆಗಿದೆ";
-      startListen();
+  function goBack() {
+    try { history.back(); } catch (e) {}
+  }
+
+  function clearAll() {
+    notes = [];
+    chatEl.innerHTML = "";
+    botSay("ಹೊಸದಾಗಿ ಶುರುವಾಗಿದೆ. ಏನು ಬೇಕು ಹೇಳಿ?");
+  }
+
+  function pickedFile(ev) {
+    var files = (ev && ev.target && ev.target.files) || [];
+    if (!files.length) return;
+    var names = [];
+    for (var i = 0; i < files.length; i++) names.push(files[i].name);
+    botSay("ಫೈಲ್ ಆಯ್ಕೆಯಾಗಿದೆ: " + names.join(", "));
+  }
+
+  function makeSampleCode() {
+    return [
+      "<!DOCTYPE html>",
+      "<html>",
+      "<head><meta charset='UTF-8'><title>My App</title></head>",
+      "<body style='font-family:sans-serif;padding:20px;'>",
+      "  <h3>ನನ್ನ ಆ್ಯಪ್</h3>",
+      "  <input id='t' placeholder='ಬರೆಯಿರಿ'>",
+      "  <button onclick='p.innerText=t.value'>ತೋರಿಸಿ</button>",
+      "  <p id='p'></p>",
+      "</body>",
+      "</html>"
+    ].join("\n");
+  }
+
+  function think(q) {
+    var s = q.toLowerCase();
+
+    if (s.indexOf("ನೆನಪಿಟ್ಟುಕೋ") !== -1) {
+      notes.push(q);
+      return { text: "ಸೇವ್ ಮಾಡಿಕೊಂಡಿದ್ದೇನೆ: " + q };
+    }
+    if (s.indexOf("ಏನು ಸೇವ್") !== -1 || s.indexOf("ನೆನಪು") !== -1) {
+      return { text: notes.length ? notes.join("\n") : "ಇನ್ನೂ ಏನೂ ಸೇವ್ ಆಗಿಲ್ಲ." };
+    }
+    if (s.indexOf("ಹಿಂದಕ್ಕೆ") !== -1 || s.indexOf("ಬ್ಯಾಕ್") !== -1) {
+      setTimeout(goBack, 300);
+      return { text: "ಹಿಂದಕ್ಕೆ ಹೋಗುತ್ತಿದ್ದೇನೆ." };
+    }
+    if (s.indexOf("ಅಪ್ಲೋಡ್") !== -1 || s.indexOf("ಗ್ಯಾಲರಿ") !== -1) {
+      document.getElementById("fp").click();
+      return { text: "ಫೈಲ್ ಆಯ್ಕೆ ತೆರೆದಿದ್ದೇನೆ." };
+    }
+    if (s.indexOf("youtube") !== -1 || s.indexOf("ಯೂಟ್ಯೂಬ್") !== -1) {
+      window.open("[https://studio.youtube.com](https://studio.youtube.com)", "_blank");
+      return { text: "YouTube Studio ತೆರೆದಿದ್ದೇನೆ." };
+    }
+    if (s.indexOf("instagram") !== -1 || s.indexOf("ಇನ್ಸ್ಟಾಗ್ರಾಂ") !== -1) {
+      window.open("[https://www.instagram.com/](https://www.instagram.com/)", "_blank");
+      return { text: "Instagram ತೆರೆದಿದ್ದೇನೆ." };
+    }
+    if (s.indexOf("facebook") !== -1 || s.indexOf("ಫೇಸ್ಬುಕ್") !== -1) {
+      window.open("[https://www.facebook.com/](https://www.facebook.com/)", "_blank");
+      return { text: "Facebook ತೆರೆದಿದ್ದೇನೆ." };
+    }
+    if (s.indexOf("ಕೋಡ್") !== -1 || s.indexOf("code") !== -1) {
+      return { text: "ಕೋಡ್ ಸಿದ್ಧವಾಗಿದೆ. ಕೆಳಗಿನ ಬಟನ್ ಒತ್ತಿ ಕಾಪಿ ಮಾಡಿ:", code: makeSampleCode() };
+    }
+    if (s.indexOf("ಹಾಡು") !== -1 || s.indexOf("song") !== -1) {
+      return {
+        text: "ಕನಸಿನ ದಾರಿಯಲಿ ನಡೆಯುವಾಗ,\nನಂಬಿಕೆಯ ಬೆಳಕು ಜೊತೆಗಿರಲಿ,\nನಮ್ಮದೇ ಸ್ವಂತದ ಹಾದಿಯಲಿ,\nಗೆಲುವಿನ ಹಾಡನು ಹಾಡೋಣ."
+      };
+    }
+
+    return {
+      text: "ನೀವು ಕೇಳಿದ್ದು: " + q + "\nಹೆಚ್ಚಿನ ಮಾಹಿತಿಗೆ ಸರ್ಚ್ ಲಿಂಕ್: [https://www.google.com/search?q=](https://www.google.com/search?q=)" + encodeURIComponent(q)
+    };
+  }
+
+  function sendNow(forcedText) {
+    var val = (forcedText !== undefined ? forcedText : inpEl.value).trim();
+    if (!val) return;
+    if (forcedText === undefined) inpEl.value = "";
+    showMsg("user", val);
+    var ans = think(val);
+    botSay(ans.text, ans.code);
+  }
+
+  function startRec() {
+    try {
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) {
+        stEl.textContent = "ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮೈಕ್ ಬೆಂಬಲವಿಲ್ಲ";
+        return;
+      }
+      recObj = new SR();
+      recObj.lang = "kn-IN";
+      recObj.onstart = function () {
+        stEl.textContent = "ಕೇಳುತ್ತಿದ್ದೇನೆ...";
+        micBtn.className = "r";
+      };
+      recObj.onresult = function (e) {
+        var said = e.results[0][0].transcript;
+        sendNow(said);
+      };
+      recObj.onend = recObj.onerror = function () {
+        micBtn.className = "g";
+        stEl.textContent = isCont ? "ನಿರಂತರ ಮೋಡ್ ಆನ್" : "ಸಿದ್ಧವಾಗಿದೆ";
+        if (isCont) setTimeout(startRec, 500);
+      };
+      recObj.start();
+    } catch (e) {}
+  }
+
+  function listenOnce() {
+    isCont = false;
+    contBtn.className = "g";
+    startRec();
+  }
+
+  function toggleCont() {
+    isCont = !isCont;
+    if (isCont) {
+      contBtn.className = "r";
+      stEl.textContent = "ನಿರಂತರ ಮೋಡ್ ಆನ್";
+      startRec();
     } else {
-      autoBtn.classList.remove("btn-red");
-      autoBtn.classList.add("btn-green");
-      statusText.textContent = "ಸಿದ್ಧವಾಗಿದೆ • ಉತ್ತರ + ಕೋಡ್ + ಹಾಡು + ನೆನಪು";
-      try { if (rec) rec.stop(); } catch (_) {}
+      contBtn.className = "g";
+      stEl.textContent = "ನಿರಂತರ ಮೋಡ್ ಆಫ್";
+      try { if (recObj) recObj.stop(); } catch (e) {}
     }
   }
 
-  (function initApp() {
-    memory.forEach(m => { if (m.role === "user" || m.role === "bot") addMsg(m.role, m.text); });
-    if (memory.length === 0) {
-      addMsg("bot", "ನಮಸ್ಕಾರ! ಆವೃತ್ತಿ A ಸಿದ್ಧವಾಗಿದೆ. ಪ್ರಶ್ನೆ ಕೇಳಿ, 'ಕೋಡ್ ಬರಿ' ಎನ್ನಿ, 'ಹಾಡು ಬರಿ' ಎನ್ನಿ ಅಥವಾ 'ನೆನಪಿಟ್ಟುಕೋ ...' ಎಂದು ಹೇಳಿ.");
-    }
-  })();
+  showMsg("bot", "ನಮಸ್ಕಾರ! ರೋಬೋಟ್ ಸಿದ್ಧವಾಗಿದೆ. ಕೆಳಗೆ ಟೈಪ್ ಮಾಡಿ 'ಕಳುಹಿಸಿ' ಒತ್ತಿ ಅಥವಾ 'ಮೈಕ್' ಒತ್ತಿ ಮಾತನಾಡಿ.");
 </script>
 </body>
 </html>
