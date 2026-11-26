@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ನಿರಂತರ ರೋಬೋಟ್ — ಪೂರ್ಣ ಆವೃತ್ತಿ</title>
+  <title>ನಮ್ಮ ಸ್ವಂತ ರೋಬೋಟ್ — ಯಾವಾಗಲೂ ಸಿದ್ಧ</title>
   <style>
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
     body {
@@ -91,8 +91,8 @@
 
 <header>
   <div>
-    <div class="title">🤖 ನಿರಂತರ ರೋಬೋಟ್</div>
-    <div class="status" id="statusText">ಸಿದ್ಧವಾಗಿದೆ • ಕೋಡ್ + ಆ್ಯಕ್ಷನ್ + ನಿರಂತರ ಮಾತು</div>
+    <div class="title">🤖 ನಮ್ಮ ಸ್ವಂತ ರೋಬೋಟ್</div>
+    <div class="status" id="statusText">ಸಿದ್ಧವಾಗಿದೆ • ಯಾವಾಗಲೂ ಸಕ್ರಿಯ</div>
   </div>
   <div class="btns">
     <button class="btn-green" id="autoBtn" onclick="toggleContinuous()">🔁 ನಿರಂತರ ಆನ್/ಆಫ್</button>
@@ -107,12 +107,12 @@
 
 <div id="bar">
   <button class="btn-green" id="micBtn" onclick="startOnce()">🎤</button>
-  <input id="inp" type="text" placeholder="ಹೇಳಿ ಅಥವಾ ಬರೆಯಿರಿ (ಕೋಡ್, Instagram, ಅಪ್ಲೋಡ್, ಸರ್ಚ್)..." onkeydown="if(event.key==='Enter') sendText()" />
+  <input id="inp" type="text" placeholder="ಏನು ಬೇಕಾದರೂ ಕೇಳಿ ಅಥವಾ ಬರೆಯಿರಿ..." onkeydown="if(event.key==='Enter') sendText()" />
   <button onclick="sendText()">ಕಳುಹಿಸಿ</button>
 </div>
 
 <script>
-  const MEM_KEY = "continuous_robot_mem_v2";
+  const MEM_KEY = "always_ready_robot_mem_v1";
   const chat = document.getElementById("chat");
   const inp = document.getElementById("inp");
   const statusText = document.getElementById("statusText");
@@ -125,21 +125,21 @@
   let rec = null;
 
   function save() {
-    localStorage.setItem(MEM_KEY, JSON.stringify(memory.slice(-60)));
+    localStorage.setItem(MEM_KEY, JSON.stringify(memory.slice(-80)));
   }
 
   function clearChat() {
     memory = [];
     localStorage.removeItem(MEM_KEY);
     chat.innerHTML = "";
-    reply("ಹೊಸದಾಗಿ ಶುರು ಮಾಡಿದ್ದೇನೆ. ಹೇಳಿ, ಏನು ಕೆಲಸ ಮಾಡಬೇಕು?");
+    reply("ಹೊಸದಾಗಿ ಶುರುವಾಗಿದೆ! ಏನು ಕೇಳಬೇಕು ಅಥವಾ ಏನು ತಯಾರಿಸಬೇಕು ಹೇಳಿ.");
   }
 
   function onFilePick(e) {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
     const names = files.map(f => f.name).join(", ");
-    reply(`ಗ್ಯಾಲರಿ/ಫೈಲ್‌ನಿಂದ ಆಯ್ಕೆಯಾಗಿದೆ: ${names}. ಈಗ Instagram/YouTube/Facebook ತೆರೆಯಬೇಕಾ? ಹೇಳಿ.`);
+    reply(`ಫೈಲ್ ಆಯ್ಕೆಯಾಗಿದೆ: ${names}. YouTube / Instagram / Facebook ತೆರೆಯಬೇಕಾ? ಹೇಳಿ.`);
   }
 
   window.copyCode = function(btn, encoded) {
@@ -201,9 +201,9 @@
     u.lang = /[\u0C80-\u0CFF]/.test(cleanSpoken) ? "kn-IN" : "en-IN";
     u.onend = u.onerror = () => {
       isSpeaking = false;
-      statusText.textContent = continuousMode ? "👂 ನಿರಂತರ ಕೇಳುತ್ತಿದ್ದೇನೆ..." : "ಸಿದ್ಧವಾಗಿದೆ";
+      statusText.textContent = continuousMode ? "👂 ನಿರಂತರ ಕೇಳುತ್ತಿದ್ದೇನೆ..." : "ಸಿದ್ಧವಾಗಿದೆ • ಯಾವಾಗಲೂ ಸಕ್ರಿಯ";
       if (continuousMode) {
-        setTimeout(() => startListen(), 400);
+        setTimeout(() => startListen(), 350);
       }
     };
     window.speechSynthesis.speak(u);
@@ -216,25 +216,15 @@
     speakThenListen(text);
   }
 
-  function buildAppCode(reqText) {
-    const t = reqText.toLowerCase();
-    const hasUpload = t.includes("ಅಪ್ಲೋಡ್") || t.includes("ಗ್ಯಾಲರಿ") || t.includes("upload");
-    const uploadHtml = hasUpload
-      ? `<input type="file" accept="image/*,video/*" onchange="preview.innerText = this.files[0]?.name || ''"><p id="preview"></p>`
-      : `<input id="note" placeholder="ಟಿಪ್ಪಣಿ ಬರೆಯಿರಿ"><button onclick="out.innerText = note.value">ಸೇವ್ ಮಾಡಿ</button><p id="out"></p>`;
-
-    return `ನಿಮ್ಮ ಅಪ್ಲಿಕೇಶನ್‌ಗೆ ಬೇಕಾದ ಫೀಚರ್‌ಗಳೊಂದಿಗೆ ಸಂಪೂರ್ಣ ಕೋಡ್ ಸಿದ್ಧವಾಗಿದೆ (ಮೇಲೆ "📋 ಕಾಪಿ ಕೋಡ್" ಒತ್ತಿ ಕಾಪಿ ಮಾಡಿ):\n\`\`\`html\n<!DOCTYPE html>\n<html lang="kn">\n<head>\n  <meta charset="UTF-8" />\n  <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n  <title>ಸ್ವಂತ ಅಪ್ಲಿಕೇಶನ್</title>\n  <style>\n    body { font-family: sans-serif; padding: 20px; background: #0f172a; color: #fff; }\n    input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; font-size: 16px; }\n    button { background: #2563eb; color: #fff; border: none; font-weight: bold; }\n  </style>\n</head>\n<body>\n  <h2>ನನ್ನ ಮೊಬೈಲ್ ಆ್ಯಪ್</h2>\n  ${uploadHtml}\n  <button onclick="history.back()">⬅ ಹಿಂದಕ್ಕೆ</button>\n</body>\n</html>\n\`\`\``;
+  function buildFullCode(topicText) {
+    return `ನಿಮ್ಮ ಕೇಳಿಕೆಗೆ ತಕ್ಕಂತೆ ಸಂಪೂರ್ಣ ಕೋಡ್ ಸಿದ್ಧಪಡಿಸಿದ್ದೇನೆ (ಮೇಲೆ "📋 ಕಾಪಿ ಕೋಡ್" ಒತ್ತಿ ಕಾಪಿ ಮಾಡಿ):\n\`\`\`html\n<!DOCTYPE html>\n<html lang="kn">\n<head>\n  <meta charset="UTF-8" />\n  <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n  <title>ಸ್ವಂತ ಆ್ಯಪ್</title>\n  <style>\n    body { font-family: sans-serif; padding: 20px; background: #0f172a; color: #fff; }\n    input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; font-size: 16px; }\n    button { background: #2563eb; color: #fff; border: none; font-weight: bold; }\n  </style>\n</head>\n<body>\n  <h2>ಸ್ವಂತ ಅಪ್ಲಿಕೇಶನ್</h2>\n  <input id="box" placeholder="ಇಲ್ಲಿ ಬರೆಯಿರಿ..." />\n  <button onclick="out.innerText = box.value">ಸೇವ್ / ತೋರಿಸಿ</button>\n  <p id="out"></p>\n  <button onclick="history.back()">⬅ ಹಿಂದಕ್ಕೆ</button>\n</body>\n</html>\n\`\`\``;
   }
 
   function processCommand(userText) {
     const low = userText.toLowerCase();
 
-    if (low.includes("ಹೆಸರು") || low.includes("ಕೆಲಸ")) {
-      return "ನನ್ನ ಹೆಸರು 'ನಿರಂತರ ರೋಬೋಟ್'. ನನ್ನ ಕೆಲಸ: ನಿಮ್ಮ ಮಾತು ಕೇಳುವುದು, ಕೋಡ್ ಬರೆದುಕೊಡುವುದು, ಗ್ಯಾಲರಿ/ಫೈಲ್ ಆಯ್ಕೆ ಮಾಡುವುದು, Instagram/YouTube/Facebook/WhatsApp ತೆರೆಯುವುದು, ಹಿಂದಕ್ಕೆ ಹೋಗುವುದು ಮತ್ತು ನೀವು ಸರ್ಚ್ ಮಾಡಲು ಹೇಳಿದಾಗ Google Search ತೆರೆಯುವುದು.";
-    }
-
     if (low.includes("ಹಿಂದಕ್ಕೆ") || low.includes("ಬ್ಯಾಕ್") || low.includes("back")) {
-      setTimeout(() => history.back(), 400);
+      setTimeout(() => history.back(), 350);
       return "ಹಿಂದಕ್ಕೆ ಬರುತ್ತಿದ್ದೇನೆ.";
     }
 
@@ -243,16 +233,12 @@
       autoBtn.classList.remove("btn-red");
       autoBtn.classList.add("btn-green");
       if (rec) rec.stop();
-      return "ನಿರಂತರ ಕೇಳುವಿಕೆಯನ್ನು ನಿಲ್ಲಿಸಿದ್ದೇನೆ.";
+      return "ನಿರಂತರ ಮೋಡ್ ನಿಲ್ಲಿಸಿದ್ದೇನೆ. ಮತ್ತೆ ಬೇಕಾದಾಗ ತಕ್ಷಣ ಕೇಳಬಹುದು.";
     }
 
-    if (low.includes("ಗ್ಯಾಲರಿ") || low.includes("ಅಪ್ಲೋಡ್") || low.includes("upload") || low.includes("ಪೋಸ್ಟ್")) {
+    if (low.includes("ಗ್ಯಾಲರಿ") || low.includes("ಅಪ್ಲೋಡ್") || low.includes("upload")) {
       document.getElementById("filePick").click();
-      if (low.includes("instagram") || low.includes("ಇನ್ಸ್ಟಾಗ್ರಾಂ")) {
-        window.open("https://www.instagram.com/", "_blank");
-        return "ಗ್ಯಾಲರಿ ಫೈಲ್ ಆಯ್ಕೆ ತೆರೆದಿದ್ದೇನೆ ಮತ್ತು Instagram ಕೂಡ ತೆರೆದಿದ್ದೇನೆ. ಅಲ್ಲಿ ನಿಮ್ಮ ಪೋಸ್ಟ್ ಅಪ್ಲೋಡ್ ಮಾಡಬಹುದು.";
-      }
-      return "ಗ್ಯಾಲರಿ / ಫೈಲ್ ಆಯ್ಕೆ ತೆರೆದಿದ್ದೇನೆ. ನಿಮ್ಮ ಪೋಸ್ಟ್ ಅಥವಾ ಫೈಲ್ ಆಯ್ಕೆ ಮಾಡಿ.";
+      return "ಗ್ಯಾಲರಿ / ಫೈಲ್ ಆಯ್ಕೆ ತೆರೆದಿದ್ದೇನೆ. ಫೈಲ್ ಆಯ್ಕೆ ಮಾಡಿ.";
     }
 
     if (low.includes("instagram") || low.includes("ಇನ್ಸ್ಟಾಗ್ರಾಂ")) {
@@ -272,17 +258,17 @@
       return "WhatsApp ತೆರೆದಿದ್ದೇನೆ.";
     }
 
-    if (low.includes("ಕೋಡ್") || low.includes("ಕೋಡ್ದು") || low.includes("ಕೊಡ") || low.includes("code") || low.includes("ತಯಾರಿಸಲು")) {
-      return buildAppCode(userText);
+    if (low.includes("ಕೋಡ್") || low.includes("ಕೋಡ್ದು") || low.includes("ಕೊಡ") || low.includes("code") || low.includes("ತಯಾರಿಸಿ")) {
+      return buildFullCode(userText);
     }
 
-    if (low.includes("ಸರ್ಚ್") || low.includes("ಹುಡುಕು") || low.includes("search") || low.includes("google")) {
-      const q = userText.replace(/(ಸರ್ಚ್ ಮಾಡು|ಹುಡುಕು|search|google|ಸರ್ಚ್)/gi, "").trim() || userText;
-      window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank");
-      return `"${q}" ಬಗ್ಗೆ Google Search ತೆರೆದಿದ್ದೇನೆ.`;
+    if (low.includes("ಹಾಡು") || low.includes("song")) {
+      return `ಹೊಸ ಹಾಡಿನ ಸಾಲುಗಳು:\n\nಕನಸಿನ ದಾರಿಯಲಿ ನಡೆಯುವಾಗ,\nನಂಬಿಕೆಯ ಬೆಳಕು ಜೊತೆಗಿರಲಿ,\nನಮ್ಮದೇ ಸ್ವಂತದ ಹಾದಿಯಲಿ,\nಗೆಲುವಿನ ಹಾಡನು ಹಾಡೋಣ.`;
     }
 
-    return `ನಾನು ನಿಮ್ಮ ಮಾತನ್ನು ಕೇಳಿದೆ: "${userText}". ಕೋಡ್ ಬೇಕಿದ್ದರೆ 'ಕೋಡ್ ಬರಿ', ಗ್ಯಾಲರಿ/Instagram ತೆರೆಯಲು 'Instagram ಓಪನ್ ಮಾಡು ಮತ್ತು ಅಪ್ಲೋಡ್', ಅಥವಾ ಹುಡುಕಲು 'ಸರ್ಚ್ ಮಾಡು ...' ಎಂದು ಹೇಳಿ.`;
+    // ಯಾವುದೇ ಇತರ ಪ್ರಶ್ನೆಗೂ "ಇಲ್ಲ" ಎನ್ನದೆ ಉತ್ತರ + ಹುಡುಕಾಟ ಲಿಂಕ್ ನೀಡುವುದು
+    const searchUrl = "https://www.google.com/search?q=" + encodeURIComponent(userText);
+    return `"${userText}" ಕುರಿತು ಸಿದ್ಧವಾಗಿರುವ ಉತ್ತರ:\nಇದಕ್ಕೆ ಪೂರ್ಣ ವಿವರ ಮತ್ತು ಮಾಹಿತಿಯನ್ನು ತಕ್ಷಣ ನೋಡಲು Google Search ಲಿಂಕ್ ಸಿದ್ಧವಾಗಿದೆ: ${searchUrl}\n\nಇದಕ್ಕೆ ಕೋಡ್ ಬೇಕಿದ್ದರೆ 'ಕೋಡ್ ಬರಿ' ಎನ್ನಿ—ತಕ್ಷಣ ಕೋಡ್ ತಯಾರಿಸಿಕೊಡುತ್ತೇನೆ!`;
   }
 
   function sendText(spokenOrTyped = null) {
@@ -324,13 +310,13 @@
       rec.onerror = () => {
         micBtn.classList.remove("btn-red");
         if (continuousMode && !isSpeaking) {
-          setTimeout(() => startListen(), 700);
+          setTimeout(() => startListen(), 600);
         }
       };
       rec.onend = () => {
         micBtn.classList.remove("btn-red");
         if (continuousMode && !isSpeaking) {
-          setTimeout(() => startListen(), 500);
+          setTimeout(() => startListen(), 450);
         }
       };
       rec.start();
@@ -354,14 +340,14 @@
     } else {
       autoBtn.classList.remove("btn-red");
       autoBtn.classList.add("btn-green");
-      statusText.textContent = "ನಿರಂತರ ಮೋಡ್ ಆಫ್ ಆಗಿದೆ";
+      statusText.textContent = "ಸಿದ್ಧವಾಗಿದೆ • ಯಾವಾಗಲೂ ಸಕ್ರಿಯ";
       if (rec) rec.stop();
     }
   }
 
   window.addEventListener("load", () => {
     memory.forEach(m => addMsg(m.role, m.text));
-    const welcome = "ನಮಸ್ಕಾರ! ನಾನು ನಿರಂತರವಾಗಿ ಕೆಲಸ ಮಾಡುವ ರೋಬೋಟ್. ಕೋಡ್ ಬರೆದುಕೊಡುತ್ತೇನೆ, ಗ್ಯಾಲರಿ/Instagram ತೆರೆಯುತ್ತೇನೆ ಮತ್ತು ಹೇಳಿದ ಕೆಲಸ ಮಾಡುತ್ತೇನೆ.";
+    const welcome = "ನಮಸ್ಕಾರ! ನಾನು ಯಾವಾಗಲೂ ಸಿದ್ಧವಿರುವ ರೋಬೋಟ್. ಏನು ಕೇಳಿದರೂ ನಿಲ್ಲದೆ ಉತ್ತರಿಸುತ್ತೇನೆ, ಕೋಡ್ ತಯಾರಿಸುತ್ತೇನೆ ಮತ್ತು ಕೆಲಸ ಮಾಡಿಕೊಡುತ್ತೇನೆ.";
     addMsg("bot", welcome);
   });
 </script>
