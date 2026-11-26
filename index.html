@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ನಿರಂತರ ರೋಬೋಟ್ — Auto Search & Talk</title>
+  <title>ನಿರಂತರ ರೋಬೋಟ್ — ಪೂರ್ಣ ಆವೃತ್ತಿ</title>
   <style>
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
     body {
@@ -15,7 +15,7 @@
       flex-direction: column;
     }
     header {
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(15, 23, 42, 0.96);
       padding: 12px 14px;
       border-bottom: 1px solid #334155;
       display: flex;
@@ -42,7 +42,7 @@
 
     #chat {
       flex: 1; padding: 14px; display: flex;
-      flex-direction: column; gap: 12px; padding-bottom: 90px;
+      flex-direction: column; gap: 12px; padding-bottom: 92px;
     }
     .msg {
       padding: 12px 14px; border-radius: 14px;
@@ -55,8 +55,24 @@
     }
     .bot {
       align-self: flex-start; background: #1e293b;
-      border: 1px solid #334155; max-width: 95%;
+      border: 1px solid #334155; width: 100%; max-width: 96%;
       border-bottom-left-radius: 4px;
+    }
+
+    .code-box {
+      margin-top: 10px; border: 1px solid #38bdf8;
+      border-radius: 10px; overflow: hidden; background: #050811;
+    }
+    .code-top {
+      background: #0f172a; padding: 8px 12px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid #1e293b;
+    }
+    .copy-btn { background: #0284c7; padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+    .copy-btn.ok { background: #16a34a; }
+    pre {
+      margin: 0; padding: 12px; overflow-x: auto;
+      color: #e2e8f0; font-size: 12.5px; line-height: 1.45;
     }
 
     #bar {
@@ -76,25 +92,27 @@
 <header>
   <div>
     <div class="title">🤖 ನಿರಂತರ ರೋಬೋಟ್</div>
-    <div class="status" id="statusText">ಸಿದ್ಧವಾಗಿದೆ • Auto Search On</div>
+    <div class="status" id="statusText">ಸಿದ್ಧವಾಗಿದೆ • ಕೋಡ್ + ಆ್ಯಕ್ಷನ್ + ನಿರಂತರ ಮಾತು</div>
   </div>
   <div class="btns">
     <button class="btn-green" id="autoBtn" onclick="toggleContinuous()">🔁 ನಿರಂತರ ಆನ್/ಆಫ್</button>
     <button class="btn-amber" onclick="history.back()">⬅ ಹಿಂದಕ್ಕೆ</button>
+    <button class="btn-gray" onclick="document.getElementById('filePick').click()">📁 ಅಪ್ಲೋಡ್</button>
     <button class="btn-gray" onclick="clearChat()">ಅಳಿಸಿ</button>
   </div>
 </header>
 
 <div id="chat"></div>
+<input type="file" id="filePick" accept="image/*,video/*,audio/*,.html,.txt" multiple style="display:none" onchange="onFilePick(event)" />
 
 <div id="bar">
   <button class="btn-green" id="micBtn" onclick="startOnce()">🎤</button>
-  <input id="inp" type="text" placeholder="ಏನಾದರೂ ಕೇಳಿ ಅಥವಾ ಸರ್ಚ್ ಮಾಡಿ..." onkeydown="if(event.key==='Enter') sendText()" />
+  <input id="inp" type="text" placeholder="ಹೇಳಿ ಅಥವಾ ಬರೆಯಿರಿ (ಕೋಡ್, Instagram, ಅಪ್ಲೋಡ್, ಸರ್ಚ್)..." onkeydown="if(event.key==='Enter') sendText()" />
   <button onclick="sendText()">ಕಳುಹಿಸಿ</button>
 </div>
 
 <script>
-  const MEM_KEY = "continuous_robot_mem_v1";
+  const MEM_KEY = "continuous_robot_mem_v2";
   const chat = document.getElementById("chat");
   const inp = document.getElementById("inp");
   const statusText = document.getElementById("statusText");
@@ -114,13 +132,57 @@
     memory = [];
     localStorage.removeItem(MEM_KEY);
     chat.innerHTML = "";
-    reply("ಹೊಸದಾಗಿ ಶುರು ಮಾಡಿದ್ದೇನೆ. ಹೇಳಿ, ಏನು ಹುಡುಕಬೇಕು ಅಥವಾ ಏನು ಮಾಡಬೇಕು?");
+    reply("ಹೊಸದಾಗಿ ಶುರು ಮಾಡಿದ್ದೇನೆ. ಹೇಳಿ, ಏನು ಕೆಲಸ ಮಾಡಬೇಕು?");
   }
+
+  function onFilePick(e) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    const names = files.map(f => f.name).join(", ");
+    reply(`ಗ್ಯಾಲರಿ/ಫೈಲ್‌ನಿಂದ ಆಯ್ಕೆಯಾಗಿದೆ: ${names}. ಈಗ Instagram/YouTube/Facebook ತೆರೆಯಬೇಕಾ? ಹೇಳಿ.`);
+  }
+
+  window.copyCode = function(btn, encoded) {
+    navigator.clipboard.writeText(decodeURIComponent(encoded)).then(() => {
+      btn.textContent = "✅ ಕಾಪಿ ಆಗಿದೆ";
+      btn.classList.add("ok");
+      setTimeout(() => {
+        btn.textContent = "📋 ಕಾಪಿ ಕೋಡ್";
+        btn.classList.remove("ok");
+      }, 1800);
+    });
+  };
 
   function addMsg(role, text) {
     const d = document.createElement("div");
     d.className = `msg ${role}`;
-    d.textContent = text;
+
+    if (text.includes("```")) {
+      const parts = text.split("```");
+      parts.forEach((p, i) => {
+        if (i % 2 === 1) {
+          const code = p.replace(/^[a-zA-Z0-9_-]+\n/, "");
+          const box = document.createElement("div");
+          box.className = "code-box";
+          box.innerHTML = `
+            <div class="code-top">
+              <span style="color:#38bdf8;font-size:12px;font-weight:700;">FULL CODE</span>
+              <button class="copy-btn" onclick="copyCode(this, '${encodeURIComponent(code)}')">📋 ಕಾಪಿ ಕೋಡ್</button>
+            </div>
+            <pre></pre>
+          `;
+          box.querySelector("pre").textContent = code;
+          div.appendChild(box);
+        } else if (p.trim()) {
+          const span = document.createElement("span");
+          span.textContent = p;
+          div.appendChild(span);
+        }
+      });
+    } else {
+      div.textContent = text;
+    }
+
     chat.appendChild(d);
     chat.scrollTop = chat.scrollHeight;
   }
@@ -134,13 +196,14 @@
     isSpeaking = true;
     statusText.textContent = "🔊 ಮಾತನಾಡುತ್ತಿದ್ದೇನೆ...";
 
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = /[\u0C80-\u0CFF]/.test(text) ? "kn-IN" : "en-IN";
+    const cleanSpoken = text.replace(/```[\s\S]*?```/g, "ಕೋಡ್ ಸಿದ್ಧವಾಗಿದೆ, ಕೆಳಗೆ ಕಾಪಿ ಬಟನ್ ಇದೆ.").replace(/[*#]/g, "");
+    const u = new SpeechSynthesisUtterance(cleanSpoken);
+    u.lang = /[\u0C80-\u0CFF]/.test(cleanSpoken) ? "kn-IN" : "en-IN";
     u.onend = u.onerror = () => {
       isSpeaking = false;
       statusText.textContent = continuousMode ? "👂 ನಿರಂತರ ಕೇಳುತ್ತಿದ್ದೇನೆ..." : "ಸಿದ್ಧವಾಗಿದೆ";
       if (continuousMode) {
-        setTimeout(() => startListen(), 350);
+        setTimeout(() => startListen(), 400);
       }
     };
     window.speechSynthesis.speak(u);
@@ -153,16 +216,22 @@
     speakThenListen(text);
   }
 
-  function openGoogleSearch(queryText) {
-    const cleanQ = queryText
-      .replace(/(ಸರ್ಚ್ ಮಾಡು|ಹುಡುಕು|search|google|ಓಪನ್ ಮಾಡು|ತೆರೆ|ಅಂದ್ರೆ ಏನು|ಏನು)/gi, "")
-      .trim() || queryText;
-    window.open("https://www.google.com/search?q=" + encodeURIComponent(cleanQ), "_blank");
-    return `"${cleanQ}" ಬಗ್ಗೆ Google Search ತೆರೆದಿದ್ದೇನೆ.`;
+  function buildAppCode(reqText) {
+    const t = reqText.toLowerCase();
+    const hasUpload = t.includes("ಅಪ್ಲೋಡ್") || t.includes("ಗ್ಯಾಲರಿ") || t.includes("upload");
+    const uploadHtml = hasUpload
+      ? `<input type="file" accept="image/*,video/*" onchange="preview.innerText = this.files[0]?.name || ''"><p id="preview"></p>`
+      : `<input id="note" placeholder="ಟಿಪ್ಪಣಿ ಬರೆಯಿರಿ"><button onclick="out.innerText = note.value">ಸೇವ್ ಮಾಡಿ</button><p id="out"></p>`;
+
+    return `ನಿಮ್ಮ ಅಪ್ಲಿಕೇಶನ್‌ಗೆ ಬೇಕಾದ ಫೀಚರ್‌ಗಳೊಂದಿಗೆ ಸಂಪೂರ್ಣ ಕೋಡ್ ಸಿದ್ಧವಾಗಿದೆ (ಮೇಲೆ "📋 ಕಾಪಿ ಕೋಡ್" ಒತ್ತಿ ಕಾಪಿ ಮಾಡಿ):\n\`\`\`html\n<!DOCTYPE html>\n<html lang="kn">\n<head>\n  <meta charset="UTF-8" />\n  <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n  <title>ಸ್ವಂತ ಅಪ್ಲಿಕೇಶನ್</title>\n  <style>\n    body { font-family: sans-serif; padding: 20px; background: #0f172a; color: #fff; }\n    input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; font-size: 16px; }\n    button { background: #2563eb; color: #fff; border: none; font-weight: bold; }\n  </style>\n</head>\n<body>\n  <h2>ನನ್ನ ಮೊಬೈಲ್ ಆ್ಯಪ್</h2>\n  ${uploadHtml}\n  <button onclick="history.back()">⬅ ಹಿಂದಕ್ಕೆ</button>\n</body>\n</html>\n\`\`\``;
   }
 
   function processCommand(userText) {
     const low = userText.toLowerCase();
+
+    if (low.includes("ಹೆಸರು") || low.includes("ಕೆಲಸ")) {
+      return "ನನ್ನ ಹೆಸರು 'ನಿರಂತರ ರೋಬೋಟ್'. ನನ್ನ ಕೆಲಸ: ನಿಮ್ಮ ಮಾತು ಕೇಳುವುದು, ಕೋಡ್ ಬರೆದುಕೊಡುವುದು, ಗ್ಯಾಲರಿ/ಫೈಲ್ ಆಯ್ಕೆ ಮಾಡುವುದು, Instagram/YouTube/Facebook/WhatsApp ತೆರೆಯುವುದು, ಹಿಂದಕ್ಕೆ ಹೋಗುವುದು ಮತ್ತು ನೀವು ಸರ್ಚ್ ಮಾಡಲು ಹೇಳಿದಾಗ Google Search ತೆರೆಯುವುದು.";
+    }
 
     if (low.includes("ಹಿಂದಕ್ಕೆ") || low.includes("ಬ್ಯಾಕ್") || low.includes("back")) {
       setTimeout(() => history.back(), 400);
@@ -177,17 +246,43 @@
       return "ನಿರಂತರ ಕೇಳುವಿಕೆಯನ್ನು ನಿಲ್ಲಿಸಿದ್ದೇನೆ.";
     }
 
-    // ಯಾವುದೇ ಪ್ರಶ್ನೆ ಅಥವಾ ಸರ್ಚ್ ಕೇಳಿದಾಗ Google Search ತೆರೆಯುವುದು
-    if (
-      low.includes("ಸರ್ಚ್") || low.includes("ಹುಡುಕು") || low.includes("search") ||
-      low.includes("ಏನು") || low.includes("ಯಾರು") || low.includes("ಎಲ್ಲಿ") ||
-      low.includes("ಹೇಗೆ") || low.includes("what") || low.includes("who") || low.includes("how")
-    ) {
-      const searchMsg = openGoogleSearch(userText);
-      return `${searchMsg} ನಿಮ್ಮ ಪ್ರಶ್ನೆಗೆ ವಿವರ ನೋಡಲು ಸರ್ಚ್ ಪುಟ ಸಿದ್ಧವಾಗಿದೆ.`;
+    if (low.includes("ಗ್ಯಾಲರಿ") || low.includes("ಅಪ್ಲೋಡ್") || low.includes("upload") || low.includes("ಪೋಸ್ಟ್")) {
+      document.getElementById("filePick").click();
+      if (low.includes("instagram") || low.includes("ಇನ್ಸ್ಟಾಗ್ರಾಂ")) {
+        window.open("https://www.instagram.com/", "_blank");
+        return "ಗ್ಯಾಲರಿ ಫೈಲ್ ಆಯ್ಕೆ ತೆರೆದಿದ್ದೇನೆ ಮತ್ತು Instagram ಕೂಡ ತೆರೆದಿದ್ದೇನೆ. ಅಲ್ಲಿ ನಿಮ್ಮ ಪೋಸ್ಟ್ ಅಪ್ಲೋಡ್ ಮಾಡಬಹುದು.";
+      }
+      return "ಗ್ಯಾಲರಿ / ಫೈಲ್ ಆಯ್ಕೆ ತೆರೆದಿದ್ದೇನೆ. ನಿಮ್ಮ ಪೋಸ್ಟ್ ಅಥವಾ ಫೈಲ್ ಆಯ್ಕೆ ಮಾಡಿ.";
     }
 
-    return `ನಾನು ನಿಮ್ಮ ಮಾತನ್ನು ಕೇಳಿದೆ: "${userText}". ಇನ್ನೂ ಯಾವುದಾದರೂ ವಿಷಯ ಹುಡುಕಬೇಕಾ ಅಥವಾ ಏನು ಮಾಡಬೇಕು ಹೇಳಿ?`;
+    if (low.includes("instagram") || low.includes("ಇನ್ಸ್ಟಾಗ್ರಾಂ")) {
+      window.open("https://www.instagram.com/", "_blank");
+      return "Instagram ತೆರೆದಿದ್ದೇನೆ.";
+    }
+    if (low.includes("youtube") || low.includes("ಯೂಟ್ಯೂಬ್")) {
+      window.open("https://studio.youtube.com", "_blank");
+      return "YouTube Studio ತೆರೆದಿದ್ದೇನೆ.";
+    }
+    if (low.includes("facebook") || low.includes("ಫೇಸ್ಬುಕ್")) {
+      window.open("https://www.facebook.com/", "_blank");
+      return "Facebook ತೆರೆದಿದ್ದೇನೆ.";
+    }
+    if (low.includes("whatsapp") || low.includes("ವಾಟ್ಸಾಪ್")) {
+      window.open("https://web.whatsapp.com/", "_blank");
+      return "WhatsApp ತೆರೆದಿದ್ದೇನೆ.";
+    }
+
+    if (low.includes("ಕೋಡ್") || low.includes("ಕೋಡ್ದು") || low.includes("ಕೊಡ") || low.includes("code") || low.includes("ತಯಾರಿಸಲು")) {
+      return buildAppCode(userText);
+    }
+
+    if (low.includes("ಸರ್ಚ್") || low.includes("ಹುಡುಕು") || low.includes("search") || low.includes("google")) {
+      const q = userText.replace(/(ಸರ್ಚ್ ಮಾಡು|ಹುಡುಕು|search|google|ಸರ್ಚ್)/gi, "").trim() || userText;
+      window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank");
+      return `"${q}" ಬಗ್ಗೆ Google Search ತೆರೆದಿದ್ದೇನೆ.`;
+    }
+
+    return `ನಾನು ನಿಮ್ಮ ಮಾತನ್ನು ಕೇಳಿದೆ: "${userText}". ಕೋಡ್ ಬೇಕಿದ್ದರೆ 'ಕೋಡ್ ಬರಿ', ಗ್ಯಾಲರಿ/Instagram ತೆರೆಯಲು 'Instagram ಓಪನ್ ಮಾಡು ಮತ್ತು ಅಪ್ಲೋಡ್', ಅಥವಾ ಹುಡುಕಲು 'ಸರ್ಚ್ ಮಾಡು ...' ಎಂದು ಹೇಳಿ.`;
   }
 
   function sendText(spokenOrTyped = null) {
@@ -266,7 +361,7 @@
 
   window.addEventListener("load", () => {
     memory.forEach(m => addMsg(m.role, m.text));
-    const welcome = "ನಮಸ್ಕಾರ! ನಾನು ನಿರಂತರವಾಗಿ ಕೆಲಸ ಮಾಡುವ ರೋಬೋಟ್. '🔁 ನಿರಂತರ ಆನ್/ಆಫ್' ಒತ್ತಿ ಮಾತನಾಡಿ—ನಾನು ಉತ್ತರ ಕೊಟ್ಟು ಅಗತ್ಯವಿದ್ದಾಗ Google Search ಕೂಡ ತೆರೆಯುತ್ತೇನೆ.";
+    const welcome = "ನಮಸ್ಕಾರ! ನಾನು ನಿರಂತರವಾಗಿ ಕೆಲಸ ಮಾಡುವ ರೋಬೋಟ್. ಕೋಡ್ ಬರೆದುಕೊಡುತ್ತೇನೆ, ಗ್ಯಾಲರಿ/Instagram ತೆರೆಯುತ್ತೇನೆ ಮತ್ತು ಹೇಳಿದ ಕೆಲಸ ಮಾಡುತ್ತೇನೆ.";
     addMsg("bot", welcome);
   });
 </script>
